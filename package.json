@@ -1,0 +1,47 @@
+{
+  "name": "couchdb-cookie-auth",
+  "description": "Generate authentication cookie for domain based cookie - which will create an active session on a same-domain couchdb server",
+  "version": "0.1.0",
+  "homepage": "https://github.com/pauliprice/couchdb-cookie-auth",
+  "author": {
+    "name": "Pauli Price",
+    "email": "pauli.price@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pauliprice/couchdb-cookie-auth.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pauliprice/couchdb-cookie-auth/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/pauliprice/couchdb-cookie-auth/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "lib/couchdb-cookie-auth",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt",
+    "travis-cov": {
+      "threshold": 95
+    }
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-watch": "~0.2.0",
+    "grunt": "~0.4.1",
+    "grunt-mocha-test": "~0.5.0",
+    "blanket": "~1.1.5",
+    "travis-cov": "~0.2.4",
+    "should": "~1.2.2"
+  },
+  "keywords": [],
+  "dependencies": {
+    "convict": "~0.3.3"
+  }
+}

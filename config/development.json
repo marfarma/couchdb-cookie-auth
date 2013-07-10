@@ -1,0 +1,8 @@
+{
+  "env": "development",
+  "dbUrl": "http://127.0.0.1",
+  "dbPort": 5984,
+  "dbUser":  "admin",
+  "dbPass":  "relax",
+  "noHttps": false
+}
