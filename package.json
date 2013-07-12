@@ -38,10 +38,12 @@
     "grunt-mocha-test": "~0.5.0",
     "blanket": "~1.1.5",
     "travis-cov": "~0.2.4",
-    "should": "~1.2.2"
+    "should": "~1.2.2",
+    "nock": "~0.18.2"
   },
   "keywords": [],
   "dependencies": {
-    "convict": "~0.3.3"
+    "convict": "~0.3.3",
+    "nano": "~4.0.0"
   }
 }
