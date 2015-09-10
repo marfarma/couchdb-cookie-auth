@@ -25,25 +25,28 @@
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "test": "grunt",
+    "test": "grunt"
+  },
+  "config": {
     "travis-cov": {
       "threshold": 95
     }
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "~0.1.1",
-    "grunt-contrib-nodeunit": "~0.1.2",
-    "grunt-contrib-watch": "~0.2.0",
+    "grunt-contrib-jshint": "~0.11.3",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-watch": "~0.6.1",
     "grunt": "~0.4.1",
-    "grunt-mocha-test": "~0.5.0",
+    "grunt-mocha-test": "~0.12.7",
+    "mocha": "~2.3.2",
     "blanket": "~1.1.5",
     "travis-cov": "~0.2.4",
-    "should": "~1.2.2",
-    "nock": "~0.18.2"
+    "should": "~7.1.0",
+    "nock": "~2.10.0"
   },
   "keywords": [],
   "dependencies": {
-    "convict": "~0.3.3",
-    "nano": "~4.0.0"
+    "convict": "~1.0.1",
+    "nano": "~6.1.5"
   }
 }
