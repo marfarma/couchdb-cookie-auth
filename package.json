@@ -14,12 +14,7 @@
   "bugs": {
     "url": "https://github.com/pauliprice/couchdb-cookie-auth/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/pauliprice/couchdb-cookie-auth/blob/master/LICENSE-MIT"
-    }
-  ],
+  "license": "MIT",
   "main": "lib/couchdb-cookie-auth",
   "engines": {
     "node": ">= 0.8.0"
@@ -33,20 +28,30 @@
     }
   },
   "devDependencies": {
+    "blanket": "~1.1.5",
+    "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0",
+    "grunt": "~0.4.1",
     "grunt-contrib-jshint": "~0.11.3",
     "grunt-contrib-nodeunit": "~0.4.1",
     "grunt-contrib-watch": "~0.6.1",
-    "grunt": "~0.4.1",
     "grunt-mocha-test": "~0.12.7",
+    "jsonfile": "^2.2.1",
     "mocha": "~2.3.2",
-    "blanket": "~1.1.5",
-    "travis-cov": "~0.2.4",
+    "nock": "^2.10.0",
+    "nock-vcr-recorder": "^0.1.3",
     "should": "~7.1.0",
-    "nock": "~2.10.0"
+    "travis-cov": "~0.2.4"
   },
   "keywords": [],
   "dependencies": {
+    "base64url": "^1.0.4",
+    "bluebird": "^2.10.0",
     "convict": "~1.0.1",
-    "nano": "~6.1.5"
+    "cookie": "^0.2.0",
+    "couch-pwd": "~0.0.1",
+    "crypto-js": "^3.1.5",
+    "nano": "~6.1.5",
+    "nano-blue": "~0.2.1"
   }
 }
