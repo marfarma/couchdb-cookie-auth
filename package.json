@@ -20,7 +20,8 @@
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "test": "grunt"
+    "test": "NOCK_OFF=true node --harmony $(which grunt) mochaTest",
+    "start": "grunt"
   },
   "config": {
     "travis-cov": {
@@ -31,20 +32,31 @@
     "blanket": "~1.1.5",
     "chai": "^3.2.0",
     "chai-as-promised": "^5.1.0",
+    "chai-string": "^1.1.2",
     "grunt": "~0.4.1",
+    "grunt-concurrent": "^2.0.3",
     "grunt-contrib-jshint": "~0.11.3",
     "grunt-contrib-nodeunit": "~0.4.1",
     "grunt-contrib-watch": "~0.6.1",
-    "grunt-mocha-test": "~0.12.7",
+    "grunt-mocha-test": "^0.4.0",
+    "grunt-node-inspector": "^0.2.0",
+    "grunt-nodemon": "^0.4.0",
+    "grunt-release": "^0.13.0",
+    "grunt-shell": "^1.1.2",
+    "grunt-simple-mocha": "^0.4.0",
     "jsonfile": "^2.2.1",
+    "lodash": "^3.10.1",
+    "matchdep": "^0.3.0",
     "mocha": "~2.3.2",
     "nock": "^2.10.0",
     "nock-vcr-recorder": "^0.1.3",
     "should": "~7.1.0",
+    "timekeeper": "0.0.5",
     "travis-cov": "~0.2.4"
   },
   "keywords": [],
   "dependencies": {
+    "base64-url": "^1.2.1",
     "base64url": "^1.0.4",
     "bluebird": "^2.10.0",
     "convict": "~1.0.1",
@@ -52,6 +64,8 @@
     "couch-pwd": "~0.0.1",
     "crypto-js": "^3.1.5",
     "nano": "~6.1.5",
-    "nano-blue": "~0.3.0"
+    "nano-blue": "~0.3.0",
+    "winston": "^1.0.1",
+    "winston-couchdb": "^0.6.3"
   }
 }
