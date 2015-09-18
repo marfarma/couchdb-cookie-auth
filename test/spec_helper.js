@@ -16,7 +16,6 @@
 
     function setServerConfig(server, section, key, value) {
         // _config/couch_httpd_auth/allow_persistent_cookies
-
         return server.request({
             method : 'PUT',
             path: '_config/' + section + '/' + key,
