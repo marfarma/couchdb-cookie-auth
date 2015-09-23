@@ -4,18 +4,36 @@
 
 (function () {
 
-    var couchdb_cookie_auth = require('../lib/couchdb-cookie-auth.js'),
-        nano = couchdb_cookie_auth.server,
-        nock = require('nock'),  // jshint ignore:line
-        Promise = require("bluebird");
+  var cca = require('../lib/couchdb-cookie-auth.js'),
+      nano = cca.server,
+      nock = require('nock'),  // jshint ignore:line
+      Promise = require("bluebird");
 
-    var resetConfig = function(couchdb_cookie_auth){
-        var env = couchdb_cookie_auth.config.get('env');
-        var config = couchdb_cookie_auth.config;
 
-        config.loadFile('./config/' + env + '.json');
-        couchdb_cookie_auth.setUserPass(config.get('dbUser'), config.get('dbPass'));
-    };
+  var resetConfig = function(couchdb_cookie_auth){
+      var env = couchdb_cookie_auth.config.get('env');
+      var config = couchdb_cookie_auth.config;
+
+      config.loadFile('./config/' + env + '.json');
+      couchdb_cookie_auth.setUserPass(config.get('dbUser'), config.get('dbPass'));
+  };
+
+
+  var getAuthCookie = function(couchdb_cookie_auth) {
+    return couchdb_cookie_auth.server.auth(
+      couchdb_cookie_auth.config.get('dbUser'),
+      couchdb_cookie_auth.config.get('dbPass')
+    )
+    .spread(function(body, headers) {
+      console.log(headers);
+      return Promise.resolve(headers);
+    })
+    .catch(function(err) {
+      console.log(err);
+      return Promise.reject(err);
+    });
+  };
+
 
     function setServerConfig(server, section, key, value) {
         // _config/couch_httpd_auth/allow_persistent_cookies
@@ -33,13 +51,64 @@
 
     }
 
+
+    // creates a server admin and returns a promise. Resolves to the db success message
+    // or rejected with the db error response respectively.
+    //
+    function createServerAdmin(server, name, password) {
+      // PUT http://localhost:5984/_config/admins/{name} -d '{password}'
+
+        return server.request({
+            method : 'PUT',
+            path: '_config/admins/' + name,
+            body: password
+        })
+        .then(function(body) {
+            return Promise.resolve([body]);
+        })
+        .catch(function(err) {
+            return Promise.reject(err);
+        });
+    }
+
+    // deletes a server admin and returns a promise. Resolves to the db success message
+    // or rejected with the db error response respectively. NB: resolves if not found
+    //
+    function deleteServerAdmin(server, name) {
+      // PUT http://localhost:5984/_config/admins/{name} -d '{password}'
+
+        return server.request({
+            method : 'GET',
+            path: '_config/admins'
+        })
+        .spread(function(body, headers){ //jshint ignore:line
+          //console.log(body);
+          if ( body.hasOwnProperty(name) ) {
+            //console.log('admin account found, deleting.');
+            return server.request({
+                method : 'DELETE',
+                path: '_config/admins/' + name
+            })
+            .then(function(body) {
+              //console.log('deleted admin account: ' + name);
+              return Promise.resolve(body);
+            });
+          }
+          return Promise.resolve();
+        })
+        .catch(function(err) {
+          console.log(err);
+          return Promise.reject(err);
+        });
+    }
+
     // deletes user and return a promise. Resolves to the db success message
     // or rejected with the db error response respectively.
     //
     function deleteUser(user) {
       var db;
 
-      return couchdb_cookie_auth.getAuthDb()
+      return cca.getAuthDb()
       .then(function(authDb) {
           db = nano.use(authDb);
           return db.get('org.couchdb.user:' + user);
@@ -75,7 +144,7 @@
       var db,
           user = userObj.name;
 
-      return couchdb_cookie_auth.getAuthDb()
+      return cca.getAuthDb()
       .then(function(authDb) {
           db = nano.use(authDb);
           return db.get('org.couchdb.user:' + user);
@@ -90,7 +159,7 @@
                 return Promise.resolve(body);
               });
           } else {
-              console.log('err is not *Not Found*');
+              console.log('err is other than *Not Found*');
               console.log(err);
               return Promise.reject(err);
           }
@@ -101,10 +170,13 @@
     }
 
     module.exports = {
+      getAuthCookie: getAuthCookie,
         resetConfig: resetConfig,
         createUser: createUser,
         deleteUser: deleteUser,
-        setServerConfig: setServerConfig
+        setServerConfig: setServerConfig,
+      createServerAdmin: createServerAdmin,
+      deleteServerAdmin: deleteServerAdmin
     };
 
 }());

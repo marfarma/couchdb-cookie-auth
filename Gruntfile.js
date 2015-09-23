@@ -12,7 +12,8 @@ module.exports = function(grunt) {
           reporter: 'spec',
           clearRequireCache: true,
           timeout: 5000,
-          require: 'coverage/blanket'
+          require: 'coverage/blanket',
+          colors: true
         },
         src: ['test/**/*.js']
       },
@@ -72,7 +73,8 @@ module.exports = function(grunt) {
     shell: {
       test: {
         options: {
-          stdout: true
+          stdout: true,
+          colors: true
         },
         command: 'node --harmony $(which grunt) mochaTest'
       },
@@ -88,7 +90,7 @@ module.exports = function(grunt) {
         },
         command: 'node --debug --harmony $(which grunt) test'
       },
-      debugtestdev: {
+      debugtestlive: {
         options: {
           stdout: true
         },
@@ -106,7 +108,7 @@ module.exports = function(grunt) {
     },
     concurrent: {
       testd: ['node-inspector', 'shell:debugtest'],
-      testdevd: ['node-inspector', 'shell:debugtestdev'],
+      testdevd: ['node-inspector', 'shell:debugtestlive'],
       options: {
         logConcurrentOutput: true
       }
