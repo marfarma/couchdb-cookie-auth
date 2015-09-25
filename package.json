@@ -17,7 +17,7 @@
   "license": "MIT",
   "main": "lib/couchdb-cookie-auth",
   "engines": {
-    "node": ">= 0.8.0"
+    "node": ">= 0.10.40"
   },
   "scripts": {
     "test": "node --harmony $(which grunt) mochaTest",
