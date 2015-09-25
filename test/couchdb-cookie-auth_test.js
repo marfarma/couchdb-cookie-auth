@@ -2,7 +2,7 @@
 /*global describe, xit, it, before, after, beforeEach, afterEach */
 'use strict';
 
-var cca = require('../lib/couchdb-cookie-auth.js'),
+var cca = require('../lib/couchdb-cookie-auth'),
   chai = require('chai'),
   chaiAsPromised = require("chai-as-promised"),
   should = chai.should(), // jshint ignore:line
@@ -10,23 +10,39 @@ var cca = require('../lib/couchdb-cookie-auth.js'),
   Promise = require("bluebird"),
   nock = require('nock'),
   nano = cca.server,
-  sha1 = require('../lib/sha1'),
+  sha1 = require('../external/sha1'),
   base64url = require('sixtyfour'),
   tk = require('timekeeper'),
   user = 'patricia';
 
   chai.use(chaiAsPromised);
   chai.use(require('chai-string'));
+  chai.use(require('chai-shallow-deep-equal'));
 
 // known good values
 var target = {
-    Cookie: "YWRtaW46NTYwMkNCOUU6urYrI4jgqahrY1EygJ_y-HzU098",
-    User: "admin",
-    TimeStr: "5602CB9E",
-    Secret: "92de07df7e7a3fe14808cef90a7cc0d91",
-    UserSalt: "39cb5a639e5b848228bb49fd72da18e8",
-    Timeout: 600
+  Cookie: "YWRtaW46NTYwMkNCOUU6urYrI4jgqahrY1EygJ_y-HzU098",
+  User: "admin",
+  TimeStr: "5602CB9E",
+  Secret: "92de07df7e7a3fe14808cef90a7cc0d91",
+  UserSalt: "39cb5a639e5b848228bb49fd72da18e8",
+  Timeout: 600,
+  InvalidUserCookie: "aW52YWxpZFVzZXI6NTYwMkNCOUU6Petp0kC-j9NQFb:FVsCUq7F9A7A",
+  InvalidHashCookie: "YWRtaW46NTYwMkNCOUU6aW52YWxpZCBoYXNo",
+  ExpiredTimeStr: "5602cebe",
+  Pct95TimeStr: "5602cbbc",
+  Pct95Cookie: 'YWRtaW46NTYwMkNCQkM6mbfg82RnREOnLT2zBonR33eyBrw',
+  Pct70TimeStr: "5602cc52",
+  Pct70Cookie: 'YWRtaW46NTYwMkNDNTI6RSr-kZ7L4ptdMO3PIdTUhsczFwA',
+  FutureOkTimeStr: "5602cc02",
+  EmbeddedColonsTimeStr: '560499F2',
+  EmbeddedColonsCookie: 'YWRtaW46NTYwNDk5RjI6rj-yfek6J-a8oXa0rpsAXyAeHss',
+  FutureDatedCookie: 'YWRtaW46NTYwNEE1NEM6dqTEnYBO9IN5wgeUlzcJudA9ciE'
 };
+var SessionData = target.User + ":" + target.TimeStr;
+var FullSecret = target.Secret + target.UserSalt;
+target.Hash  = base64url.decodeAsBuffer(sha1.b64_hmac_sha1(FullSecret, SessionData));
+
 var testUser = {
   name: user,
   password: 'secret',
@@ -40,100 +56,23 @@ describe('SSL', function(){
 });
 describe('Cookie', function() {
   describe('validCookie', function() {
-    var admin = {}, regular = {}, scope = nock('http://104.236.41.70:80');
-
-//    before(function(){
-//        scope.done();
-//        nock.cleanAll();
-//        scope = nock('http://104.236.41.70:80')
-//          .get('/_config/couch_httpd_auth/authentication_db')
-//          .reply(200, "_users")
-//          .get('/_users/org.couchdb.user%3Apatricia')
-//          .reply(404, {
-//            "error": "not_found",
-//            "reason": "deleted"
-//          })
-//          .put('/_users/org.couchdb.user%3Apatricia', {
-//            "name": "patricia",
-//            "password": "secret",
-//            "roles": [],
-//            "type": "user"
-//          })
-//          .reply(201, {
-//            "ok": true,
-//            "id": "org.couchdb.user:patricia",
-//            "rev": "1-a6294859a9f9a9982e2915fb18ee7d83"
-//          });
-//
-//        return test_helper.createUser(dummy);
-//    });
-
-//    after(function(){
-//        scope.done();
-//        nock.cleanAll();
-//        scope = nock('http://104.236.41.70:80')
-//          .get('/_config/couch_httpd_auth/authentication_db')
-//          .reply(200, "_users")
-//          .get('/_users/org.couchdb.user%3Amary')
-//          .reply(200, {
-//            "_id": "org.couchdb.user:mary",
-//            "_rev": "1-a6294859a9f9a9982e2915fb18ee7d83",
-//            "password_scheme": "pbkdf2",
-//            "iterations": 10,
-//            "name": "mary",
-//            "roles": [],
-//            "type": "user",
-//            "derived_key": "dc1b08a2ec5226106fbc6dad3fc0e226ac8c2b4f",
-//            "salt": "fb275752e32d2b6ebbba5f687a188697"
-//          })
-//          .get('/_config/couch_httpd_auth/authentication_db')
-//          .reply(200, "_users")
-//          .delete('/_users/org.couchdb.user%3Amary')
-//          .query({
-//            "rev": "1-a6294859a9f9a9982e2915fb18ee7d83"
-//          })
-//          .reply(200);
-//
-//        return test_helper.deleteUser(user)
-//        .then(function(result){
-//          scope.done();
-//          return Promise.resolve(result);
-//        })
-//        .catch(function(err){
-//          console.log('there was an error');
-//          scope.done();
-//          return Promise.reject(err);
-//        });
-//    });
-    beforeEach(function(){
-
-//      admin = cca.parseCookie('YWRtaW46NTYwMDg1Qzk6UhhTpdKHwyYCNjrpNt9Dp8LrOlI');
-//      admin.cookie = 'YWRtaW46NTVGRDZDRUE6vtRbQoEXD9O6R4MYd8ro2o6Rzrc';
-//      admin.seconds = parseInt(admin.timestamp, 16)*1000;
-//      admin.time = new Date(admin.seconds);
-      //console.log('admin.hash: ' + admin.hash.toString());
-      //console.log('filler');
-
-      regular = cca.parseCookie('bWFyeTo1NUZGODY4QzqQZ7Kb7tzKoY8osGuguJ2MBUqT4g');
-      regular.cookie = 'bWFyeTo1NUZGODY4QzqQZ7Kb7tzKoY8osGuguJ2MBUqT4g';
-      regular.seconds = parseInt(regular.timestamp, 16)*1000;
-      regular.time = new Date(regular.seconds);
-    });
     afterEach(function(){
-      //console.log(target.Cookie);
       tk.reset();
     });
-
     it('should parse valid cookie value', function() {
-      var SessionData = target.User + ":" + target.TimeStr;
-      var FullSecret = target.Secret + target.UserSalt;
-      var Hash = base64url.decodeAsBuffer(sha1.b64_hmac_sha1(FullSecret, SessionData));
       var result = cca.parseCookie(target.Cookie);
 
       result.should.deep.equal({
         user: target.User,
         timestamp: target.TimeStr,
-        hash:  Hash
+        hash:  target.Hash
+      });
+    });
+    it('should parse valid cookie value with embedded colons', function() {
+      var result = cca.parseCookie(target.EmbeddedColonsCookie);
+      result.should.shallowDeepEqual({
+        user: target.User,
+        timestamp: target.EmbeddedColonsTimeStr
       });
     });
     it('should fail to parse invalid cookie value', function() {
@@ -142,79 +81,39 @@ describe('Cookie', function() {
           'RDZDRUE6vtRo2o6Rzrc');
       }).should.throw(Error);
     });
+    it('should split a base64url decoded cookie with a leading separator', function() {
+      var decoded = base64url.urldecodeAsBuffer(target.Cookie);
+      decoded = Buffer.concat([new Buffer(":"), decoded]);
+
+      var parts = cca.splitBuffer(decoded, 0x3A);
+      parts.length.should.equal(3);
+      parts[0].should.deep.equal(new Buffer(target.User));
+      parts[1].should.deep.equal(new Buffer(target.TimeStr));
+      parts[2].should.deep.equal(target.Hash);
+    });
     it('should be invalid when bad user', function() {
-      var time,
-          SessionData,
-          timestamp = parseInt(target.TimeStr, 16) * 1000,
-          cookieVal;
-      time = new Date(timestamp);
-      tk.travel(time); // Mock system clock to reference date
-
-      SessionData = 'invalidUser' + ":" + target.TimeStr;
-      var FullSecret = target.Secret + target.UserSalt;
-      var Hash = base64url.decodeAsBuffer(sha1.b64_hmac_sha1(FullSecret, SessionData));
-      var plain = Buffer.concat([new Buffer(SessionData),new Buffer(":"), Hash]);
-      var result = base64url.urlencode(new Buffer(plain));
-      result = result.toString('binary');
-
-
-      SessionData = 'invalid' + ":" + admin.timestamp;
-      cookieVal = base64url.encode(SessionData + ':' + admin.hash);
-
-      return cca.validCookie(cookieVal).should.become(false);
+      test_helper.fixClock(tk, target.TimeStr);
+      return cca.validCookie(target.InvalidUserCookie).should.become(false);
+    });
+    it('should be invalid if cookie timestamp is in the future', function() {
+      test_helper.fixClock(tk, target.TimeStr);
+      return cca.validCookie(target.FutureDatedCookie).should.become(false);
     });
     it('should return invalid on invalid hash', function() {
-      var time,
-          SessionData,
-          timestamp = parseInt(target.TimeStr, 16);
-
-          //nock.recorder.rec();
-
-      scope.done();
-      nock.cleanAll();
-      scope = nock('http://104.236.41.70:80')
-        .get('/_config/couch_httpd_auth/authentication_db')
-        .reply(200, "_users")
-        .get('/_users/org.couchdb.user%3Aadmin')
-        .reply(404);
-
-      time = new Date(timestamp*1000);
-      tk.travel(time); // Mock system clock to reference date
-
-      SessionData = target.User + ":" + target.TimeStr;
-      var plain = Buffer.concat([new Buffer(SessionData),new Buffer(":"),new Buffer("invalid hash")]);
-      var result = base64url.urlencode(new Buffer(plain));
-      result = result.toString('binary');
-
-      return cca.validCookie(result).should.become(false);
+      test_helper.fixClock(tk, target.TimeStr);
+      return cca.validCookie(target.InvalidHashCookie).should.become(false);
     });
     it('should return invalid when cookie expired', function() {
-      var time,
-          timestamp = (parseInt(target.TimeStr, 16) + 800
-          )*1000; // future time in milliseconds
-
-      time = new Date(timestamp);
-      tk.travel(time); // Mock system clock to the future
-
+      test_helper.fixClock(tk, target.ExpiredTimeStr);
       return cca.validCookie(target.Cookie).should.become(false);
     });
     it('should return valid when current time is within the timeout period', function() {
-      var time,
-          timestamp = (parseInt(target.TimeStr, 16) + 100
-          )*1000;                             // future time in milliseconds
-
-      time = new Date(timestamp);
-      tk.travel(time); // Mock system clock to the future
-
+      test_helper.fixClock(tk, target.FutureOkTimeStr);
       return cca.validCookie(target.Cookie).should.become(true);
     });
-    it('should generate valid cookie', function() {
-      var timestamp = parseInt(target.TimeStr, 16) * 1000;
-      var time = new Date(timestamp);
-      tk.travel(time); // Mock system clock to reference date
-
-      var full = target.Secret + target.UserSalt;
-      var result = cca.cookieValue(full, target.User, target.TimeStr);
+    it('should validate generated cookie value', function() {
+      test_helper.fixClock(tk, target.TimeStr);
+      var result = cca.cookieValue(target.Secret + target.UserSalt, target.User, target.TimeStr);
       return cca.validCookie(result).should.become(true);
     });
     it('should return expected cookie value given user, timestamp, and secret', function() {
@@ -224,27 +123,79 @@ describe('Cookie', function() {
     });
   });
   describe('makeCookie getCookieValue refreshCookie', function() {
-    it('should return cookie with options that matche expected value', function() {
-      /*
-        cookie should be formatted correctly (options, etc)
-      */
-      return Promise.reject();
+    afterEach(function(){
+      tk.reset();
     });
-    xit('should return empty cookie user not found', function() {
-      // ...
+    it('should return cookie with options that match expected', function() {
+      var expected = 'AuthSession=' + target.Cookie +
+        '; Domain='+ cca.config.get('domain') +
+        '; Path=/; HttpOnly';
+
+      test_helper.freezeClock(tk, target.TimeStr);
+      return cca.newCookie(target.User)
+      .then(function(result){
+        return result.should.deep.equal(expected);
+      });
     });
-    xit('should return cookie submitted cookie is invalid', function() {
-      // ...
+    it('should return empty cookie user not found', function() {
+      var expected = 'AuthSession=' +
+        '; Domain='+ cca.config.get('domain') +
+        '; Path=/; HttpOnly';
+
+      test_helper.freezeClock(tk, target.TimeStr);
+      return cca.newCookie('invalidUser')
+      .then(function(result){
+        return result.should.deep.equal(expected);
+      });
     });
-    xit('should refresh a valid cookie at less than 90% of timeout', function() {
-      // ...
+    it('should return empty cookie if submitted cookie is invalid', function() {
+      var expected = 'AuthSession=' +
+        '; Domain='+ cca.config.get('domain') +
+        '; Path=/; HttpOnly';
+
+      test_helper.freezeClock(tk, target.TimeStr);
+      return cca.makeCookie(target.User, target.InvalidHashCookie)
+      .then(function(result){
+        return result.should.deep.equal(expected);
+      });
     });
-    xit('should not refresh a valid cookie at 90% or more of timeoutt', function() {
-      // ...
+    it('should refresh a valid cookie at less than 90% of timeout', function() {
+      var original = 'AuthSession=' + target.Cookie +
+        '; Domain='+ cca.config.get('domain') +
+        '; Path=/; HttpOnly';
+      var refreshed = 'AuthSession=' + target.Pct70Cookie +
+        '; Domain='+ cca.config.get('domain') +
+        '; Path=/; HttpOnly';
+
+      test_helper.freezeClock(tk, target.Pct70TimeStr);
+      return cca.makeCookie(target.User, original)
+      .then(function(result){
+        return result.should.deep.equal(refreshed);
+      });
+    });
+    it('should not refresh a valid cookie at 90% or more of timeoutt', function() {
+      var expected = 'AuthSession=' + target.Cookie +
+        '; Domain='+ cca.config.get('domain') +
+        '; Path=/; HttpOnly';
+
+      test_helper.freezeClock(tk, target.Pct95TimeStr);
+      return cca.makeCookie(target.User, expected)
+      .then(function(result){
+        return result.should.deep.equal(expected);
+      });
+    });
+    it('should return a new cookie if no existing cookie is provided', function() {
+      var expected = 'AuthSession=' + target.Cookie +
+        '; Domain='+ cca.config.get('domain') +
+        '; Path=/; HttpOnly';
+
+      return cca.makeCookie(target.User)
+      .then(function(result){
+        return result.should.not.deep.equal(expected);
+      });
     });
   });
   describe('getCookieOptions', function() {
-
     beforeEach(function(){
       var config = cca.config;
 
@@ -262,7 +213,6 @@ describe('Cookie', function() {
         return result.config.should.deep.equal(cca.server.config);
       });
     });
-
     afterEach(function(){
       var config = cca.config;
 
@@ -280,7 +230,6 @@ describe('Cookie', function() {
         return result.config.should.deep.equal(cca.server.config);
       });
     });
-
     it('should set the cookie-domain to the couchdb config domain value', function() {
       process.env.COOKIE_DOMAIN = 'example.com';
       var env = cca.config.default('env');
@@ -329,7 +278,6 @@ describe('Cookie', function() {
     });
     describe('maxAge', function() {
       var scope = nock('http://104.236.41.70:80');
-
       beforeEach(function() {
         scope.done();
         nock.cleanAll();
@@ -354,7 +302,6 @@ describe('Cookie', function() {
             return Promise.resolve();
           });
       });
-
       it('should return 0 if allow_persistent_cookies is false', function() {
         scope.done();
         nock.cleanAll();
@@ -371,8 +318,7 @@ describe('Cookie', function() {
           return cca.maxAge().should.eventually.become(0);
         });
       });
-
-      it('should return the value of "_config/couch_httpd_auth/timeout" if allow_persistent_cookies is true', function() {
+      it('should return the value of "timeout" if allow_persistent_cookies is true', function() {
         scope.done();
         nock.cleanAll();
         scope = nock('http://104.236.41.70:80')
@@ -390,7 +336,6 @@ describe('Cookie', function() {
           return cca.maxAge().should.eventually.become(600);
         });
       });
-
       it('should set max-age if couch_httpd_auth/allow_persistent_cookies is true', function() {
         scope.done();
         nock.cleanAll();
@@ -431,14 +376,11 @@ describe('Cookie', function() {
           });
         });
       });
-
     });
   });
   describe('fullSecret', function() {
     describe('secret', function() {
       var scope = nock('http://104.236.41.70:80');
-      //nock.recorder.rec();
-
       it('should read secret from couchdb server', function() {
         scope.done();
         nock.cleanAll();
@@ -457,10 +399,8 @@ describe('Cookie', function() {
       });
     });
     describe('salt', function() {
-
       var alt_db = 'alt_users',
           scope = nock('http://104.236.41.70:80');
-
       before(function() {
         scope.done();
         nock.cleanAll();
@@ -472,7 +412,6 @@ describe('Cookie', function() {
 
         return nano.db.create(alt_db);
       });
-
       after(function() {
         scope.done();
         nock.cleanAll();
@@ -497,13 +436,12 @@ describe('Cookie', function() {
                 return Promise.resolve([confRet, delRet]);
               })
               .catch(function(err) {
-                console.log(err);
+                //console.log(err);
                 scope.done();
                 return Promise.reject(err);
               });
           });
       });
-
       beforeEach(function() {
         scope.done();
         nock.cleanAll();
@@ -530,7 +468,6 @@ describe('Cookie', function() {
         return test_helper.createUser(testUser);
 
       });
-
       afterEach(function() {
         scope.done();
         nock.cleanAll();
@@ -573,7 +510,6 @@ describe('Cookie', function() {
           return Promise.reject(err);
         });
       });
-
       it('should read salt from a server admin', function(done) {
         scope.done();
         nock.cleanAll();
@@ -601,7 +537,6 @@ describe('Cookie', function() {
           return Promise.reject(err);
         }).should.notify(done);
       });
-
       it('should read salt from user document', function(done) {
         scope.done();
         nock.cleanAll();
@@ -643,7 +578,6 @@ describe('Cookie', function() {
           return Promise.reject(err);
         }).should.notify(done);
       });
-
       it('should respect couchdb user database config setting', function() {
         scope.done();
         nock.cleanAll();
@@ -666,7 +600,6 @@ describe('Cookie', function() {
             return cca.getUserSalt(user).should.be.rejected;
           });
       });
-
       it('should throw if user is not found', function() {
         scope.done();
         nock.cleanAll();
@@ -681,13 +614,10 @@ describe('Cookie', function() {
 
         return cca.getUserSalt("invalid user").should.be.rejected;
       });
-
     });
     describe('full', function() {
       var scope = nock('http://104.236.41.70:80'),
         user = 'patricia';
-
-
       afterEach(function() {
         scope.done();
         nock.cleanAll();
@@ -720,13 +650,10 @@ describe('Cookie', function() {
           return Promise.resolve(result);
         })
         .catch(function(err){
-          console.log('user not deleted');
           scope.done();
-          return Promise.reject(err);
+          return Promise.resolve(err);
         });
       });
-
-
       it('should return a full secret given a user', function() {
         scope.done();
         nock.cleanAll();
@@ -774,12 +701,14 @@ describe('Cookie', function() {
           return Promise.reject(err);
         });
       });
+      it('should be rejected if user is undefined', function() {
+          return cca.fullSecret().should.be.rejectedWith(TypeError, /user name required/);
+      });
     });
   });
 });
 describe('getDbConfig', function() {
   var scope = nock('http://104.236.41.70:80');
-
   beforeEach(function() {
     scope.done();
     nock.cleanAll();
@@ -803,7 +732,6 @@ describe('getDbConfig', function() {
         return Promise.resolve();
       });
   });
-
   it('should return the value of an existing config value', function() {
     scope.done();
     nock.cleanAll();
@@ -821,7 +749,6 @@ describe('getDbConfig', function() {
           .should.eventually.become('true');
       });
   });
-
   it('should return the default value for config key not found', function() {
     scope.done();
     nock.cleanAll();
@@ -836,7 +763,6 @@ describe('getDbConfig', function() {
     return cca.getConfig("couch_httpd_auth", "XXX", "true")
       .should.eventually.become('true');
   });
-
   it('should return an error for errors other than Not Found', function() {
     scope.done();
     nock.cleanAll();
@@ -856,7 +782,6 @@ describe('getDbConfig', function() {
   });
 });
 describe('Config', function() {
-
 /*jshint -W030 */
   it('should have a config object with properties dbHost, dbPort', function() {
     cca.config.has('dbHost').should.be.true;
@@ -925,5 +850,4 @@ describe('Config', function() {
     cca.config.loadFile('./config/' + env + '.json');
     cca.config.get('dbUser').should.equal('boo'); //jshint ignore: line
   });
-
 });

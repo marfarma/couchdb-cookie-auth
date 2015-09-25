@@ -4,6 +4,5 @@
 *.txt
 /coverage.html
 /config/temp.md
-
 /undefined
 /test/scratch.js

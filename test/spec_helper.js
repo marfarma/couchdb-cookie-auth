@@ -71,6 +71,16 @@
         });
     }
 
+    function fixClock(tk, TimeStr) {
+        var timestamp = parseInt(TimeStr, 16) * 1000;
+        tk.travel(new Date(timestamp)); // Mock system clock to reference date
+    }
+
+    function freezeClock(tk, TimeStr) {
+        var timestamp = parseInt(TimeStr, 16) * 1000;
+        tk.freeze(new Date(timestamp)); // Mock system clock to reference date and freeze it
+    }
+
     // deletes a server admin and returns a promise. Resolves to the db success message
     // or rejected with the db error response respectively. NB: resolves if not found
     //
@@ -176,7 +186,9 @@
         deleteUser: deleteUser,
         setServerConfig: setServerConfig,
       createServerAdmin: createServerAdmin,
-      deleteServerAdmin: deleteServerAdmin
+      deleteServerAdmin: deleteServerAdmin,
+      fixClock: fixClock,
+      freezeClock: freezeClock
     };
 
 }());
