@@ -1,7 +1,7 @@
 # couchdb-cookie-auth
 
 Generate authentication cookie for domain - creates an logged on session for a couchdb server from your Node application.
-Written to support authentication with third party providers (Google+, Facebook, etc.) from your Node application and automatically create a logged-in Couchdb session upon success.  This would allow, for example, a mobile device to authenticate via Google+ and immediately begin replication of a local database with a remote CouchDB server.  
+Written to support authentication with third party providers (Google+, Facebook, etc.) from your Node application and automatically create a logged-in Couchdb session upon success.  This would allow, for example, a mobile device to authenticate via Google+ and immediately begin replication of a local database with a remote CouchDB server.
 
 Using your Node application to enable cookie authentication for your CouchDb server allows you to support user accounts without the need of a password (from the user's standpoint).  Your Node application can supply some arbitrary password generation scheme in order to create new accounts, and then proceed to ignore it's existance.
 
@@ -12,12 +12,12 @@ Using your Node application to enable cookie authentication for your CouchDb ser
 #### couchdb_cookie_auth.makeCookie(user) [String]
 
 Given a user name, it returns a serialized cookie (with options) suitable Set-Cookie assignment, i.e.:
-    
+
 ```javascript
-    var couchdb_cookie_auth = require('couchdb-cookie-auth');    
+    var couchdb_cookie_auth = require('couchdb-cookie-auth');
     var http = require('http');
 
-    http.createServer(function (req, res) {        
+    http.createServer(function (req, res) {
         var content = 'some html content';
         res.setHeader('Set-Cookie', couchdb_cookie_auth.makeCookie(user));
         res.end(content);
@@ -28,9 +28,9 @@ Given a user name, it returns a serialized cookie (with options) suitable Set-Co
 #### couchdb_cookie_auth.validCookie(cookie) [Boolean]
 
 Given the content of an 'AuthSession' cookie, returns true if it represents a valid Couchdb session.  The user name associated with the session is embedded within the cookie.
-    
+
 ```javascript
-    var couchdb_cookie_auth = require('couchdb-cookie-auth');    
+    var couchdb_cookie_auth = require('couchdb-cookie-auth');
     var http = require('http');
 
     var j = request.jar()
@@ -38,11 +38,11 @@ Given the content of an 'AuthSession' cookie, returns true if it represents a va
       var cookie_string = j.getCookieString(url); // "key1=value1; key2=value2; ..."
       var cookies = j.getCookies(url);
       // [{key: 'key1', value: 'value1', domain: "www.google.com", ...}, ...]
-      
+
       var cookie = cookies.filter(function(el) {
         return el.key === 'AuthSession';
       })
-      
+
       if (cookie.length === 1) {
         if (couchdb_cookie_auth.validCookie(cookie[0].value)) {
             // cookie is valid couchdb session cookie, allow the request
@@ -55,7 +55,7 @@ Given the content of an 'AuthSession' cookie, returns true if it represents a va
 
 ```javascript
     var couchdb_cookie_auth = require('couchdb-cookie-auth');
-    
+
     var ssl = couchdb_cookie_auth.config.get('dbSsl');
 ```
 
@@ -64,7 +64,7 @@ Given the content of an 'AuthSession' cookie, returns true if it represents a va
 
 ```javascript
     var couchdb_cookie_auth = require('couchdb-cookie-auth');
-    
+
     couchdb_cookie_auth.config.set('domain', 'example.com');
 ```
 
@@ -91,7 +91,7 @@ This will load and merge one or multiple JSON configuration files into config.
 You may also load multiple files at once:
 
 ```javascript
-    // CONFIG_FILES=/path/to/production.json,/path/to/secrets.json,/path/to/sitespecific.json 
+    // CONFIG_FILES=/path/to/production.json,/path/to/secrets.json,/path/to/sitespecific.json
     couchdb_cookie_auth.config.loadFile(process.env.CONFIG_FILES.split(','));
 ```
 
@@ -125,7 +125,7 @@ For details of each available config setting, including supported environment va
 
 #### Hosting Domain Name Consideration
 
-Your Node application and your CouchDb server need to reside on the same root domain (this is a basic http cookie feature).  Ideally, your CouchDB Server and your Node application can reside on different ports of the same domain.  If your Node application is at api.example.com, and your CouchDb server is at example.com:5984, you can specify the cookie domain as 'example.com' and the resulting authentication cookies will be valid.  
+Your Node application and your CouchDb server need to reside on the same root domain (this is a basic http cookie feature).  Ideally, your CouchDB Server and your Node application can reside on different ports of the same domain.  If your Node application is at api.example.com, and your CouchDb server is at example.com:5984, you can specify the cookie domain as 'example.com' and the resulting authentication cookies will be valid.
 
 Attempting the inverse, however, can cause unexpected persistent sessions, leaving supposedly logged out users to remain logged in.  For example, given a CouchDB server at db.example.com and a Node application at example.com, if the session is logged out by the CouchDB server, it will send a blank AuthSession cookie with a domain value of 'db.example.com'  This cookie will not clear the AuthSession cookie with a domain of 'example.com' thereby leaving your user with a valid session cookie.
 
@@ -142,22 +142,23 @@ Attempting the inverse, however, can cause unexpected persistent sessions, leavi
 
         [couch_httpd_auth]
         secret = yours3cr37pr4s3
- 
+
 1. You may configure the number of seconds since the last request before sessions will be expired.
 
         [couch_httpd_auth]
         timeout = 600
-    
-1. You may makes cookies persistent by setting `allow_persistent_cookies` to true.  Most web browsers will delete your cookie when the browser exits.  If the cookie has a Max-Age or Expires property, the browser retains the cookie until the time specified by the Expires header.
+
+1. You may makes cookies persistent by setting `allow_persistent_cookies` to true.  Most web browsers will delete your cookie when the browser exits.  If the cookie has a Max-Age or Expires property, the browser retains the cookie until the time specified by the Expires header, i.e. it persists your cookie accross browsr restarts.
 
         [couch_httpd_auth]
-        allow_persistent_cookies = false    
-    
+        allow_persistent_cookies = false
+
 1. You may specify a non-standard location for the CouchDB system users database.
 
         [couch_httpd_auth]
-        authentication_db = _users 
-    
+        authentication_db = _users
+
 ## License
-Copyright (c) 2013 Pauli Price  
+
+Copyright (c) 2013 Pauli Price
 Licensed under the MIT license.

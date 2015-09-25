@@ -55,8 +55,11 @@ describe('SSL', function(){
     });
 });
 describe('Cookie', function() {
+  var scope = nock('http://104.236.41.70:80');
   describe('validCookie', function() {
     afterEach(function(){
+      scope.done();
+      nock.cleanAll();
       tk.reset();
     });
     it('should parse valid cookie value', function() {
@@ -108,10 +111,40 @@ describe('Cookie', function() {
       return cca.validCookie(target.Cookie).should.become(false);
     });
     it('should return valid when current time is within the timeout period', function() {
+      scope.done();
+      nock.cleanAll();
+      nock('http://104.236.41.70:80')
+        .get('/_config/couch_httpd_auth/timeout')
+        .reply(200, "600")
+        .get('/_config/couch_httpd_auth/authentication_db')
+        .reply(200, "_users")
+        .get('/_config/couch_httpd_auth/secret')
+        .reply(200, "92de07df7e7a3fe14808cef90a7cc0d91")
+        .get('/_users/org.couchdb.user%3Aadmin')
+        .query({"revs_info":"true"})
+        .reply(404, {"error":"not_found","reason":"missing"})
+        .get('/_config/admins')
+        .reply(200, {
+        "admin":"-pbkdf2-d99e6b7a9066834ce44d06a728bbacc3e881c905,39cb5a639e5b848228bb49fd72da18e8,10"});
       test_helper.fixClock(tk, target.FutureOkTimeStr);
       return cca.validCookie(target.Cookie).should.become(true);
     });
     it('should validate generated cookie value', function() {
+      scope.done();
+      nock.cleanAll();
+      nock('http://104.236.41.70:80')
+        .get('/_config/couch_httpd_auth/timeout')
+        .reply(200, "600")
+        .get('/_config/couch_httpd_auth/secret')
+        .reply(200, "92de07df7e7a3fe14808cef90a7cc0d91")
+        .get('/_config/couch_httpd_auth/authentication_db')
+        .reply(200, "_users")
+        .get('/_users/org.couchdb.user%3Aadmin')
+        .query({"revs_info":"true"})
+        .reply(404, {"error":"not_found","reason":"missing"})
+        .get('/_config/admins')
+        .reply(200, {
+          "admin":"-pbkdf2-d99e6b7a9066834ce44d06a728bbacc3e881c905,39cb5a639e5b848228bb49fd72da18e8,10"});
       test_helper.fixClock(tk, target.TimeStr);
       var result = cca.cookieValue(target.Secret + target.UserSalt, target.User, target.TimeStr);
       return cca.validCookie(result).should.become(true);
@@ -127,6 +160,21 @@ describe('Cookie', function() {
       tk.reset();
     });
     it('should return cookie with options that match expected', function() {
+      scope.done();
+      nock.cleanAll();
+      nock('http://104.236.41.70:80')
+        .get('/_config/couch_httpd_auth/authentication_db')
+        .reply(200, "_users")
+        .get('/_config/couch_httpd_auth/allow_persistent_cookies')
+        .reply(200, "false")
+        .get('/_config/couch_httpd_auth/secret')
+        .reply(200, "92de07df7e7a3fe14808cef90a7cc0d91")
+        .get('/_users/org.couchdb.user%3Aadmin')
+        .query({"revs_info":"true"})
+        .reply(404, {"error":"not_found","reason":"missing"})
+        .get('/_config/admins')
+        .reply(200, {"admin":"-pbkdf2-d99e6b7a9066834ce44d06a728bbacc3e881c905,39cb5a639e5b848228bb49fd72da18e8,10"});
+
       var expected = 'AuthSession=' + target.Cookie +
         '; Domain='+ cca.config.get('domain') +
         '; Path=/; HttpOnly';
@@ -138,6 +186,21 @@ describe('Cookie', function() {
       });
     });
     it('should return empty cookie user not found', function() {
+      scope.done();
+      nock.cleanAll();
+      nock('http://104.236.41.70:80')
+        .get('/_config/couch_httpd_auth/secret')
+        .reply(200, "92de07df7e7a3fe14808cef90a7cc0d91")
+        .get('/_config/couch_httpd_auth/authentication_db')
+        .reply(200, "_users")
+        .get('/_config/couch_httpd_auth/allow_persistent_cookies')
+        .reply(200, "false")
+        .get('/_users/org.couchdb.user%3AinvalidUser')
+        .query({"revs_info":"true"})
+        .reply(404, {"error":"not_found","reason":"missing"})
+        .get('/_config/admins')
+        .reply(200, {
+        "admin":"-pbkdf2-d99e6b7a9066834ce44d06a728bbacc3e881c905,39cb5a639e5b848228bb49fd72da18e8,10"});
       var expected = 'AuthSession=' +
         '; Domain='+ cca.config.get('domain') +
         '; Path=/; HttpOnly';
@@ -160,6 +223,38 @@ describe('Cookie', function() {
       });
     });
     it('should refresh a valid cookie at less than 90% of timeout', function() {
+//      nock.recorder.rec();
+      scope.done();
+      nock.cleanAll();
+      nock('http://104.236.41.70:80')
+        .get('/_config/couch_httpd_auth/secret')
+        .reply(200, "92de07df7e7a3fe14808cef90a7cc0d91")
+        .get('/_config/couch_httpd_auth/timeout')
+        .reply(200, "600")
+        .get('/_config/couch_httpd_auth/timeout')
+        .reply(200, "600")
+        .get('/_config/couch_httpd_auth/authentication_db')
+        .reply(200, "_users")
+        .get('/_config/couch_httpd_auth/secret')
+        .reply(200, "92de07df7e7a3fe14808cef90a7cc0d91")
+        .get('/_config/couch_httpd_auth/authentication_db')
+        .reply(200, "_users")
+        .get('/_config/couch_httpd_auth/allow_persistent_cookies')
+        .reply(200, "false")
+        .get('/_users/org.couchdb.user%3Aadmin')
+        .query({"revs_info":"true"})
+        .reply(404, {"error":"not_found","reason":"missing"})
+        .get('/_users/org.couchdb.user%3Aadmin')
+        .query({"revs_info":"true"})
+        .reply(404, {"error":"not_found","reason":"missing"})
+        .get('/_config/admins')
+        .reply(200, {
+        "admin":"-pbkdf2-d99e6b7a9066834ce44d06a728bbacc3e881c905,39cb5a639e5b848228bb49fd72da18e8,10"})
+        .get('/_config/admins')
+        .reply(200, {
+        "admin":"-pbkdf2-d99e6b7a9066834ce44d06a728bbacc3e881c905,39cb5a639e5b848228bb49fd72da18e8,10"});
+
+
       var original = 'AuthSession=' + target.Cookie +
         '; Domain='+ cca.config.get('domain') +
         '; Path=/; HttpOnly';
@@ -174,6 +269,19 @@ describe('Cookie', function() {
       });
     });
     it('should not refresh a valid cookie at 90% or more of timeoutt', function() {
+      scope.done();
+      nock.cleanAll();
+      nock('http://104.236.41.70:80')
+        .get('/_config/couch_httpd_auth/secret')
+        .reply(200, "92de07df7e7a3fe14808cef90a7cc0d91")
+        .get('/_config/couch_httpd_auth/authentication_db')
+        .reply(200, "_users")
+        .get('/_config/couch_httpd_auth/timeout')
+        .reply(200, "600")
+        .get('/_config/couch_httpd_auth/timeout')
+        .reply(200, "600");
+
+
       var expected = 'AuthSession=' + target.Cookie +
         '; Domain='+ cca.config.get('domain') +
         '; Path=/; HttpOnly';
@@ -185,6 +293,23 @@ describe('Cookie', function() {
       });
     });
     it('should return a new cookie if no existing cookie is provided', function() {
+      scope.done();
+      nock.cleanAll();
+//            nock.recorder.rec();
+      nock('http://104.236.41.70:80')
+        .get('/_config/couch_httpd_auth/allow_persistent_cookies')
+        .reply(200, "false")
+        .get('/_config/couch_httpd_auth/secret')
+        .reply(200, "92de07df7e7a3fe14808cef90a7cc0d91")
+        .get('/_config/couch_httpd_auth/authentication_db')
+        .reply(200, "_users")
+        .get('/_users/org.couchdb.user%3Aadmin')
+        .query({"revs_info":"true"})
+        .reply(404, {"error":"not_found","reason":"missing"})
+        .get('/_config/admins')
+        .reply(200, {
+        "admin":"-pbkdf2-d99e6b7a9066834ce44d06a728bbacc3e881c905,39cb5a639e5b848228bb49fd72da18e8,10"});
+
       var expected = 'AuthSession=' + target.Cookie +
         '; Domain='+ cca.config.get('domain') +
         '; Path=/; HttpOnly';
@@ -413,16 +538,20 @@ describe('Cookie', function() {
         return nano.db.create(alt_db);
       });
       after(function() {
+        //nock.recorder.rec();
         scope.done();
         nock.cleanAll();
         scope = nock('http://104.236.41.70:80')
           .delete('/alt_users')
-          .reply(200, {
-            "ok": true
-          })
+          .reply(200, {"ok": true})
           .put('/_config/couch_httpd_auth/authentication_db', '"_users"')
-          .reply(200, "_users");
-
+          .reply(200, "_users")
+          .get('/_config/admins')
+          .reply(200, {
+          "test_admin":"-pbkdf2-f604367cf489ea0784598a0788353f713feacf94,d83ff7fb3442dd6561e45bbc8eb4f255,10",
+          "admin":"-pbkdf2-d99e6b7a9066834ce44d06a728bbacc3e881c905,39cb5a639e5b848228bb49fd72da18e8,10"})
+          .delete('/_config/admins/test_admin')
+          .reply(200);
         return nano.db.destroy(alt_db)
           .then(function() {
             //console.log('after destroy alt_db database');
@@ -472,9 +601,10 @@ describe('Cookie', function() {
         scope.done();
         nock.cleanAll();
         scope = nock('http://104.236.41.70:80')
-          .put('/_config/couch_httpd_auth/authentication_db', '"_users"')
-          .reply(200, "_users")
+        //.log(console.log)
           .get('/_config/couch_httpd_auth/authentication_db')
+          .reply(200, "_users")
+          .put('/_config/couch_httpd_auth/authentication_db', '"_users"')
           .reply(200, "_users")
           .get('/_users/org.couchdb.user%3Apatricia')
           .reply(200, {
@@ -514,22 +644,29 @@ describe('Cookie', function() {
         scope.done();
         nock.cleanAll();
         scope = nock('http://104.236.41.70:80')
+          //.log(console.log)
           .get('/_config/couch_httpd_auth/authentication_db')
           .reply(200, "_users")
-          .get('/_users/org.couchdb.user%3Aadmin')
+          .get('/_users/org.couchdb.user%3Atest_admin')
           .query({
             "revs_info": "true"
           })
-          .reply(404);
+          .reply(404)
+          .put('/_config/admins/test_admin', '"password"')
+          .reply(200, "")
+          .get('/_config/admins')
+          .reply(200, {
+          "test_admin":"-pbkdf2-f604367cf489ea0784598a0788353f713feacf94,d83ff7fb3442dd6561e45bbc8eb4f255,10",
+          "admin":"-pbkdf2-d99e6b7a9066834ce44d06a728bbacc3e881c905,39cb5a639e5b848228bb49fd72da18e8,10"});
 
         return test_helper.createServerAdmin(cca.server, 'test_admin', 'password')
         .then(function(result){ //jshint ignore:line
           if (process.env.NOCK_OFF === 'true') {
             // can't know actual value of salt when running against live server
-            return cca.getUserSalt(user).should.resolve;
+            return cca.getUserSalt('test_admin').should.resolve;
           } else {
-            return cca.getUserSalt(user)
-              .should.eventually.become("");
+            return cca.getUserSalt('test_admin')
+              .should.eventually.become("d83ff7fb3442dd6561e45bbc8eb4f255");
           }
         })
         .catch(function(err) {
