@@ -2,7 +2,6 @@
 /misc/b64url/
 *.beam
 *.txt
-/coverage.html
 /config/temp.md
 /undefined
 /test/scratch.js
