@@ -1,0 +1,36 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "api.js",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "bluebird": "^2.10.0",
+    "body-parser": "^1.13.2",
+    "couchdb-cookie-auth": "marfarma/couchdb-cookie-auth",
+    "crypto": "0.0.3",
+    "express": "^4.13.1",
+    "express-authorization": "^1.0.0",
+    "jwt-simple": "^0.3.0",
+    "moment": "^2.10.6",
+    "mongoose": "^4.0.8",
+    "nano": "~6.1.5",
+    "nano-blue": "~0.3.0",
+    "nodemailer": "^1.4.0",
+    "nodemailer-mandrill-transport": "^0.3.0",
+    "nodemailer-smtp-transport": "^1.0.3",
+    "passport": "^0.2.2",
+    "passport-local": "^1.0.0",
+    "querystring": "^0.2.0",
+    "request": "^2.60.0",
+    "require-directory": "^2.1.1",
+    "smartdb": "^2.0.0",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT"
+}

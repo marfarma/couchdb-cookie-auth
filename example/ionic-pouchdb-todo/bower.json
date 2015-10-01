@@ -1,0 +1,15 @@
+{
+  "name": "Ionic PouchDb Todo",
+  "private": "true",
+  "devDependencies": {
+    "ionic": "1.1.0"
+  },
+  "dependencies": {
+    "angular-ui": "~0.4.0",
+    "angular-pouchdb": "~2.1.1",
+    "satellizer": "^0.12.5"
+  },
+  "resolutions": {
+    "angular": "1.4.3"
+  }
+}

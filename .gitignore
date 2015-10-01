@@ -6,3 +6,6 @@
 /config/temp.md
 /undefined
 /test/scratch.js
+/example/node-server/node_modules/
+/example/ionic-pouchdb-todo/www/ionicons-2.0.1/
+/example/node-server/frontend/

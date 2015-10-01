@@ -1,0 +1,35 @@
+<ion-view title="CouchDB Cookie Auth">
+  <ion-header-bar  class="bar-subheader">
+    <h1 class="title">Connect to sign up (or log in)</h1>
+  </ion-header-bar>
+
+  <ion-content  class="padding">
+      <div id="example-content" class="ionic-body active-preview">
+        <ion-list type=card class="has-heading">
+          <ion-item>
+            <a href="#" ng-click="authenticate('google')"
+               class="item item-icon-left">
+              <i class="icon ion-social-googleplus"></i>
+              Google
+            </a>
+          </ion-item>
+          <ion-item>
+            <a href="" ng-click="authenticate('facebook')"
+                    class="item item-icon-left">
+              <i class="icon ion-social-facebook"></i>
+              Facebook
+            </a>
+          </ion-item>
+          <ion-item>
+            <a href="" ng-click="authenticate('github')"
+                    class="item item-icon-left">
+              <i class="icon ion-social-github"></i>
+              Github
+            </a>
+          </ion-item>
+        </ion-list>
+      </div>
+  </ion-content>
+</ion-view>
+
+

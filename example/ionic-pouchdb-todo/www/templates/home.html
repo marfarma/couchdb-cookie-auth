@@ -1,0 +1,78 @@
+<ion-view title="CouchDB Cookie Auth">
+  <ion-nav-buttons side="primary">
+    <button class="button button-icon" ng-click="toggleOnline()">
+      <i class="icon"
+         ng-class="{'ion-connection-bars' : online, 'ion-alert-circled' : !online}"></i>
+    </button>
+    <button class="button button-icon" ng-click="logout()">
+      <i class="ion-log-out icon"></i>
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon" ng-click="newTask()">
+      <i class="ion-compose icon"></i>
+    </button>
+  </ion-nav-buttons>
+
+  <li class="ion-log-out" data-pack="default" data-tags="sign out" style="display: inline-block;"></li>
+
+  <ion-content  class="padding">
+
+      <div  class="ionic-body active-preview">
+        <p>This is a test</p>
+
+      <ion-list>
+        <ion-item ng-repeat="task in todos" class="item-icon-right"
+                  ng-class="{complete: task.completed}"
+                  ng-click="completionChanged(task)">
+          <i class="icon ion-ios7-arrow-left"></i>
+          {{task.title}}
+          <ion-option-button class="button-energized" ng-click="editTitle(task)">
+            Edit
+          </ion-option-button>
+          <ion-option-button class="button-assertive" ng-click="delete(task)">
+            Delete
+          </ion-option-button>
+        </ion-item>
+
+      </ion-list>
+    </div>
+
+<!--    <div ng-if="!isAuthenticated()">  -->
+<!--
+      <div id="example-content" class="ionic-body active-preview">
+        <ion-list type=card class="has-heading">
+
+          <ion-item>
+            <a href="#" ng-click="authenticate('google')"
+               class="item item-icon-left">
+              <i class="icon ion-social-googleplus"></i>
+              Google
+            </a>
+          </ion-item>
+
+          <ion-item>
+            <a href="" ng-click="authenticate('facebook')"
+                    class="item item-icon-left">
+              <i class="icon ion-social-facebook"></i>
+              Facebook
+            </a>
+          </ion-item>
+
+
+          <ion-item>
+            <a href="" ng-click="authenticate('github')"
+                    class="item item-icon-left">
+              <i class="icon ion-social-github"></i>
+              Github
+            </a>
+          </ion-item>
+
+        </ion-list>
+      </div>
+-->
+<!--    </div>    end !authenticated  -->
+  </ion-content>
+</ion-view>
+
+
