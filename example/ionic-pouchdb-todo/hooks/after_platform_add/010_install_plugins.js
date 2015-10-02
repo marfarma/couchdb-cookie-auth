@@ -8,9 +8,9 @@ var pluginlist = [
   'org.apache.cordova.console@0.2.11',
   'cordova-plugin-inappbrowser@1.0.0',
   'com.ionic.keyboard@1.0.3',
-  'com.pushwoosh.plugins.pushwoosh@3.3.0',
-  'https://bitbucket.org/180vita/cordova-adjust-sdk/',
-  'com.danielcwilson.plugins.googleanalytics@0.6.0',
+//  'com.pushwoosh.plugins.pushwoosh@3.3.0',
+//  'https://bitbucket.org/180vita/cordova-adjust-sdk/',
+//  'com.danielcwilson.plugins.googleanalytics@0.6.0',
   'org.apache.cordova.statusbar@0.1.8'
 ];
 

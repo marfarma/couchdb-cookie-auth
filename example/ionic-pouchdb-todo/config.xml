@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.zendigital.ionic-pouchdb-todo" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>IonPouch Todo</name>
+<widget id="com.taciko.ionic-pouchdb-todo" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>IonPouchAuth Todo</name>
   <description>
-      An Ionic Framework TODO demo with a PouchDB sync backend
+      An Ionic Framework TODO demo with a PouchDB sync backend, with 3rd party authentication that automatically creates a logged in session on the CouchDB server.
     </description>
-  <author email="daniel@zendigital.com" href="http://zendigital.com">
-      Zen Digital
+  <author email="pauli.price@gmail.com" href="http://taciko.com">
+      Pauli Price (build on a foundation provided by an app from Zen Digital)
     </author>
   <content src="index.html"/>
   <access origin="*"/>
@@ -47,28 +47,5 @@
     <splash src="resources/ios/splash/Default-Portrait~ipad.png" height="1024" width="768"/>
     <splash src="resources/ios/splash/Default@2x~iphone.png" height="960" width="640"/>
     <splash src="resources/ios/splash/Default~iphone.png" height="480" width="320"/>
-    <config-file platform="ios" target="*-Info.plist" parent="NSAppTransportSecurity">
-      <dict>
-          <key>NSExceptionDomains</key>
-          <dict>
-              <key>devcdb</key>
-              <dict>
-                  <key>NSIncludesSubdomains</key><false/>
-                  <key>NSExceptionAllowsInsecureHTTPLoads</key><true/>
-              </dict>
-              <key>localhost</key>
-              <dict>
-                <key>NSIncludesSubdomains</key><true/>
-                <key>NSExceptionAllowsInsecureHTTPLoads</key><true/>
-              </dict>
-          </dict>
-      </dict>
-     </config-file>
-
-
-
-
-
-
- </platform>
+  </platform>
 </widget>

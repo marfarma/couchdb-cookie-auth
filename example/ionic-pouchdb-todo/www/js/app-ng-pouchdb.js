@@ -1,27 +1,74 @@
 angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
   // Simple PouchDB factory
-  .factory('todoDb', function() {
+  .factory('todoDb', function () {
     var db = new PouchDB('todos');
     return db;
   })
-  .run(function($ionicPlatform) {
-    $ionicPlatform.ready(function() {
-      if (window.cordova && window.cordova.plugins.Keyboard) {
-        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-      }
-      if (window.StatusBar) {
-        StatusBar.styleDefault();
-      }
-    });
-  })
-  .config(function($httpProvider) {
-      //Enable cross domain calls
-      $httpProvider.defaults.useXDomain = true;
+  .factory('ionicReady', function ($ionicPlatform, failUnlessResolvedWithin) {
+    var readyPromise;
 
-      //Remove the header used to identify ajax call  that would prevent CORS from working
-      delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    return function () {
+      if (!readyPromise) {
+
+        //            readyPromise = $q(function(resolve, reject) {
+        //              window.document.addEventListener("deviceready", function () {
+        //                resolve();
+        //              }, false);
+        //            });
+        //readyPromise = ionic.Platform.ready();
+        var time = 2 * 60 * 1000; // 2 minutes
+        readyPromise =
+          failUnlessResolvedWithin($ionicPlatform.ready, time);
+      }
+      return readyPromise;
+    };
   })
-  .config(function($stateProvider, $urlRouterProvider) {
+  .factory('failUnlessResolvedWithin', function ($q, $timeout) {
+
+    return function (func, time) {
+      var deferred = $q.defer();
+
+      $timeout(function () {
+        deferred.reject('Not resolved within ' + time);
+      }, time);
+
+      $q.when(func()).then(function (results) {
+        deferred.resolve(results);
+      }, function (failure) {
+        deferred.reject(failure);
+      });
+
+      return deferred.promise;
+    };
+  })
+
+.run(function ($ionicPlatform, $timeout, $state, ionicReady) {
+    console.log('in run before platform ready');
+    ionicReady().then(function () {
+        console.log('ionic platform ready in run');
+        if (window.cordova && window.cordova.plugins.Keyboard) {
+          cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        }
+        if (window.StatusBar) {
+          StatusBar.styleDefault();
+        }
+        $timeout(function () {
+          $state.go('app.home');
+        }, 0);
+      })
+      .catch(function (err) {
+        console.log('device ready check failed - exceeded allowable wait time');
+        console.log(err);
+      });
+  })
+  .config(function ($httpProvider) {
+    //Enable cross domain calls
+    $httpProvider.defaults.useXDomain = true;
+
+    //Remove the header used to identify ajax call  that would prevent CORS from working
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+  })
+  .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('app', {
         abstract: true,
@@ -36,7 +83,9 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
             controller: 'TodoCtrl'
           }
         },
-        resolve: { authenticate: authenticate }
+        resolve: {
+          authenticate: authenticate
+        }
       })
       .state('app.auth', {
         url: '/',
@@ -57,20 +106,20 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
       } else {
         // The next bit of code is asynchronously tricky.
 
-        $timeout(function() {
+        $timeout(function () {
           // This code runs after the authentication promise has been rejected.
           // Go to the log-in page
           $state.go('app.auth');
-        });
+        }, 0);
 
         // Reject the authentication promise to prevent the state from loading
         return $q.reject();
       }
     }
-})
+  })
   .config(['$localStorageProvider',
     function ($localStorageProvider) {
-     var mySerializer = function (value) {
+      var mySerializer = function (value) {
         // Do what you want with the value.
         return value;
       };
@@ -82,11 +131,11 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
       $localStorageProvider.setSerializer(mySerializer);
       $localStorageProvider.setDeserializer(myDeserializer);
       $localStorageProvider.setKeyPrefix('');
-//$localStorageProvider.set('satellizer_token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1NWJhNGU4MmIwYWY1NmZlNTM3MTk3YWIiLCJleHAiOjE0NDQ0OTkzNzl9.dI4l3PAFHVr3vHJpF1cfSDfYddIPcAROWbAjaLjz164');
+      //$localStorageProvider.set('satellizer_token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1NWJhNGU4MmIwYWY1NmZlNTM3MTk3YWIiLCJleHAiOjE0NDQ0OTkzNzl9.dI4l3PAFHVr3vHJpF1cfSDfYddIPcAROWbAjaLjz164');
     }])
-  .config(function($authProvider) {
+  .config(function ($authProvider) {
     // OAuth popup should expand to full screen with no location bar/toolbar.
-//    console.log($authProvider);
+    //    console.log($authProvider);
     var commonConfig = {
       popupOptions: {
         location: 'no',
@@ -99,7 +148,7 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
     if (ionic.Platform.isIOS() || ionic.Platform.isAndroid()) {
       $authProvider.baseUrl = 'http://localhost:3000/';
       $authProvider.cordova = true;
-      commonConfig.redirectUri = 'http://localhost:8100';
+      commonConfig.redirectUri = 'http://localhost:3000';
     }
 
     $authProvider.facebook(angular.extend({}, commonConfig, {
@@ -116,13 +165,14 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
       url: 'auth/google'
     }));
   })
-  .controller('AppCtrl', function($scope, $ionicModal, $timeout) { //jshint ignore:line
-      console.log('in AppCtrl');
+  .controller('AppCtrl', function ($scope, $ionicModal, $timeout) { //jshint ignore:line
+    //console.log('in AppCtrl');
   })
-  .controller('TodoCtrl', function($scope, $ionicModal, todoDb,
-                                    $ionicPopup, $ionicListDelegate,
-                                    $auth, $localStorage, $state) {
-//  console.log('in TodoCtrl');
+  .controller('TodoCtrl', function ($scope, $ionicModal, todoDb,
+    $ionicPopup, $ionicListDelegate,
+    $auth, $localStorage, $state,
+    $rootScope, $timeout, ionicReady) {
+    //  console.log('in TodoCtrl');
     $scope.storage = $localStorage;
     // Initialize tasks
     $scope.tasks = [];
@@ -131,21 +181,30 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
     // Online sync to CouchDb
     ////////////////////////
     $scope.online = false;
+    $scope.connection = 'Offline';
 
-    $scope.toggleOnline = function() {
-      $scope.online = !$scope.online;
-      if ($scope.online) {  // Read http://pouchdb.com/api.html#sync
-        $scope.sync = todoDb.sync('http://devcdb/todos', {live: true})
+    ionicReady().then(function () {
+      window.document.addEventListener("online", function () {
+        $scope.online = true;
+        $scope.connection = 'Online';
+        // Read http://pouchdb.com/api.html#sync
+        $scope.sync = todoDb.sync('http://db.taciko.com/todos', {
+            live: true
+          })
           .on('error', function (err) {
             console.log("Syncing stopped");
             console.log(err);
           });
-      } else {
+      }, false);
+      window.document.addEventListener("offline", function () {
+        $scope.online = false;
+        $scope.connection = 'Offline';
         $scope.sync.cancel();
-      }
-    };
+      }, false);
 
-    $scope.completionChanged = function(task) {
+    });
+
+    $scope.completionChanged = function (task) {
       task.completed = !task.completed;
       $scope.update(task);
     };
@@ -154,9 +213,11 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
       live: true,
       onChange: function (change) {
         if (!change.deleted) {
-          todoDb.get(change.id, function(err, doc) {
-            if (err) {console.log(err);}
-            $scope.$apply(function() { //UPDATE
+          todoDb.get(change.id, function (err, doc) {
+            if (err) {
+              console.log(err);
+            }
+            $scope.$apply(function () { //UPDATE
               for (var i = 0; i < $scope.tasks.length; i++) {
                 if ($scope.tasks[i]._id === doc._id) {
                   $scope.tasks[i] = doc;
@@ -168,9 +229,9 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
           });
         } else { //DELETE
           $scope.$apply(function () {
-            for (var i = 0; i<$scope.tasks.length; i++) {
+            for (var i = 0; i < $scope.tasks.length; i++) {
               if ($scope.tasks[i]._id === change.id) {
-                $scope.tasks.splice(i,1);
+                $scope.tasks.splice(i, 1);
               }
             }
           });
@@ -184,13 +245,15 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
           console.log(err);
         } else {
           todoDb.put(angular.copy(task), doc._rev, function (err, res) { //jshint ignore:line
-            if (err) {console.log(err);}
+            if (err) {
+              console.log(err);
+            }
           });
         }
       });
     };
 
-    $scope.delete = function(task) {
+    $scope.delete = function (task) {
       todoDb.get(task._id, function (err, doc) {
         todoDb.remove(doc, function (err, res) {}); //jshint ignore:line
       });
@@ -198,18 +261,22 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
 
     $scope.editTitle = function (task) {
       var scope = $scope.$new(true);
-      scope.data = { response: task.title } ;
+      scope.data = {
+        response: task.title
+      };
       $ionicPopup.prompt({
         title: 'Edit task:',
         scope: scope,
         buttons: [{
             text: 'Cancel',
-            onTap: function(e) { return false; } //jshint ignore:line
+            onTap: function (e) { //jshint ignore:line
+                return false;
+              }
           },
           {
             text: '<b>Save</b>',
             type: 'button-positive',
-            onTap: function(e) { //jshint ignore:line
+            onTap: function (e) { //jshint ignore:line
               return scope.data.response;
             }
           },
@@ -224,40 +291,46 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
     };
 
     // Create our modal
-    $ionicModal.fromTemplateUrl('templates/new-task.html', function(modal) {
+    $ionicModal.fromTemplateUrl('templates/new-task.html', function (modal) {
       $scope.taskModal = modal;
     }, {
       scope: $scope
     });
 
-    $scope.createTask = function(task) {
+    $scope.createTask = function (task) {
       task.completed = false;
-      todoDb.post(angular.copy(task), function(err, res) { //jshint ignore:line
-        if (err) {console.log(err);}
+      todoDb.post(angular.copy(task), function (err, res) { //jshint ignore:line
+        if (err) {
+          console.log(err);
+        }
         task.title = "";
       });
       $scope.taskModal.hide();
     };
 
-    $scope.newTask = function() {
+    $scope.newTask = function () {
       $scope.taskModal.show();
     };
 
-    $scope.closeNewTask = function() {
+    $scope.closeNewTask = function () {
       $scope.taskModal.hide();
     };
 
-    $scope.authenticate = function(provider) {
+    $scope.authenticate = function (provider) {
       //console.log('authenticate');
       $auth.authenticate(provider)
-        .then(function() {
+        .then(function () {
           $ionicPopup.alert({
             title: 'Success',
             content: 'You have successfully logged in!'
           });
-          $state.go('app.home');
+          console.log('just before state change');
+
+          $timeout(function () {
+            $state.go('app.home');
+          }, 0);
         })
-        .catch(function(response) {
+        .catch(function (response) {
           $ionicPopup.alert({
             title: 'Error',
             content: response.data ? response.data || response.data.message : response
@@ -266,17 +339,17 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
         });
     };
 
-    $scope.logout = function() {
+    $scope.logout = function () {
       console.log('in logout method');
       $auth.logout()
-      .then(function() {
-        console.log('in logout callback method');
-        $state.go('app.auth');
-      });
+        .then(function () {
+          console.log('in logout callback method');
+          $state.go('app.auth');
+        });
     };
 
-    $scope.isAuthenticated = function() {
-//      console.log('is authenticated: ' + $auth.isAuthenticated());
+    $scope.isAuthenticated = function () {
+      //      console.log('is authenticated: ' + $auth.isAuthenticated());
       return $auth.isAuthenticated();
     };
   });

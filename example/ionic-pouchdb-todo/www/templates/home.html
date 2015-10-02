@@ -1,8 +1,9 @@
 <ion-view title="CouchDB Cookie Auth">
   <ion-nav-buttons side="primary">
-    <button class="button button-icon" ng-click="toggleOnline()">
+    <button class="button button-icon">
       <i class="icon"
-         ng-class="{'ion-connection-bars' : online, 'ion-alert-circled' : !online}"></i>
+         ng-class="{'ion-connection-bars' : online, 'ion-alert-circled' : !online}"
+         ng-attr-title="{{connection}}"></i>
     </button>
     <button class="button button-icon" ng-click="logout()">
       <i class="ion-log-out icon"></i>
