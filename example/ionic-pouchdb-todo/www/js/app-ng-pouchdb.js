@@ -4,47 +4,9 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
     var db = new PouchDB('todos');
     return db;
   })
-  .factory('ionicReady', function ($ionicPlatform, failUnlessResolvedWithin) {
-    var readyPromise;
-
-    return function () {
-      if (!readyPromise) {
-
-        //            readyPromise = $q(function(resolve, reject) {
-        //              window.document.addEventListener("deviceready", function () {
-        //                resolve();
-        //              }, false);
-        //            });
-        //readyPromise = ionic.Platform.ready();
-        var time = 2 * 60 * 1000; // 2 minutes
-        readyPromise =
-          failUnlessResolvedWithin($ionicPlatform.ready, time);
-      }
-      return readyPromise;
-    };
-  })
-  .factory('failUnlessResolvedWithin', function ($q, $timeout) {
-
-    return function (func, time) {
-      var deferred = $q.defer();
-
-      $timeout(function () {
-        deferred.reject('Not resolved within ' + time);
-      }, time);
-
-      $q.when(func()).then(function (results) {
-        deferred.resolve(results);
-      }, function (failure) {
-        deferred.reject(failure);
-      });
-
-      return deferred.promise;
-    };
-  })
-
-.run(function ($ionicPlatform, $timeout, $state, ionicReady) {
+  .run(function ($ionicPlatform, $timeout, $state) {
     console.log('in run before platform ready');
-    ionicReady().then(function () {
+     $ionicPlatform.ready(function() {
         console.log('ionic platform ready in run');
         if (window.cordova && window.cordova.plugins.Keyboard) {
           cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -55,10 +17,6 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
         $timeout(function () {
           $state.go('app.home');
         }, 0);
-      })
-      .catch(function (err) {
-        console.log('device ready check failed - exceeded allowable wait time');
-        console.log(err);
       });
   })
   .config(function ($httpProvider) {
@@ -120,7 +78,6 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
   .config(['$localStorageProvider',
     function ($localStorageProvider) {
       var mySerializer = function (value) {
-        // Do what you want with the value.
         return value;
       };
 
@@ -135,7 +92,6 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
     }])
   .config(function ($authProvider) {
     // OAuth popup should expand to full screen with no location bar/toolbar.
-    //    console.log($authProvider);
     var commonConfig = {
       popupOptions: {
         location: 'no',
@@ -169,9 +125,9 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
     //console.log('in AppCtrl');
   })
   .controller('TodoCtrl', function ($scope, $ionicModal, todoDb,
-    $ionicPopup, $ionicListDelegate,
+    $ionicPopup, $ionicListDelegate, $ionicPlatform,
     $auth, $localStorage, $state,
-    $rootScope, $timeout, ionicReady) {
+    $rootScope, $timeout) {
     //  console.log('in TodoCtrl');
     $scope.storage = $localStorage;
     // Initialize tasks
@@ -183,7 +139,7 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
     $scope.online = false;
     $scope.connection = 'Offline';
 
-    ionicReady().then(function () {
+    $ionicPlatform.ready(function () {
       window.document.addEventListener("online", function () {
         $scope.online = true;
         $scope.connection = 'Online';
@@ -317,28 +273,26 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
     };
 
     $scope.authenticate = function (provider) {
-      //console.log('authenticate');
       $auth.authenticate(provider)
-        .then(function () {
-          $ionicPopup.alert({
-            title: 'Success',
-            content: 'You have successfully logged in!'
-          });
-          console.log('just before state change');
-
-          $timeout(function () {
-            $state.go('app.home');
-          }, 0);
-        })
-        .catch(function (response) {
-          $ionicPopup.alert({
-            title: 'Error',
-            content: response.data ? response.data || response.data.message : response
-          });
-
+      .then(function () {
+        $ionicPopup.alert({
+          title: 'Success',
+          content: 'You have successfully logged in!'
         });
-    };
+        console.log('just before state change');
 
+        $timeout(function () {
+          $state.go('app.home');
+        }, 0);
+      })
+      .catch(function (response) {
+        $ionicPopup.alert({
+          title: 'Error',
+          content: response.data ? response.data || response.data.message : response
+        });
+
+      });
+    };
     $scope.logout = function () {
       console.log('in logout method');
       $auth.logout()
