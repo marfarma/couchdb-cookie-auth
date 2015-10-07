@@ -113,7 +113,7 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
     }));
 
     $authProvider.twitter(angular.extend({}, commonConfig, {
-      url: 'http://localhost:3000/auth/twitter'
+      url: 'http://localhost/auth/twitter'
     }));
 
     $authProvider.google(angular.extend({}, commonConfig, {
