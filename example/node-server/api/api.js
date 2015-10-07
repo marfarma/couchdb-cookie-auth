@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
  * couchdb-cookie-auth
  * https://github.com/pauliprice/couchdb-cookie-auth
@@ -19,18 +21,24 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-
-//var jwt = require('jwt-simple');
+//var mongoose = require('mongoose');
 var passport = require('passport');
-
-//var request = require('request');
 var facebookAuth = require('./services/facebookAuth.js');
 var localStrategy = require('./services/localStrategy.js');
 //var models = require('./services/models.js');
 var emailVerification = require('./services/emailVerification.js');
 var createSendToken = require('./services/jwt.js');
 var googleAuth = require('./services/googleAuth.js');
+var readline = require('readline');
+var Promise = require('bluebird'); //jshint ignore:line
+
+var CONFIG = {};
+var section = process.argv[2];
+
+var log = function(mesg) {
+  console.log(JSON.stringify(["log", mesg]));
+};
+
 
 var app = express();
 
@@ -71,6 +79,11 @@ app.post('/login',
         createSendToken(req.user, res);
 });
 
+
+app.post('/test', function(req, res) {
+       res.send("The proxy is working");
+});
+
 app.post('/auth/facebook', facebookAuth);
 
 app.post('/auth/google', googleAuth);
@@ -88,10 +101,38 @@ app.post('/auth/google', googleAuth);
 //
 //app.del('/api/:model/:id', models.delete);
 
+//mongoose.connect('mongodb://localhost/psjwt');
 
-mongoose.connect('mongodb://localhost/psjwt');
+// OS daemon stdin listener
 
-var server = app.listen(3000, function () {
-    console.log('api listening on ', server.address().port);
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
 });
 
+rl.question(JSON.stringify(['get', section]) + '\n', function(answer) {
+  CONFIG[section] = JSON.parse(answer);
+
+  if (CONFIG[section].port) {
+    app.listen(parseInt(CONFIG[section].port), function() {
+      log('provisioning service listening on port '+CONFIG[section].port);
+    });
+  }
+  else {
+    log('missing required parameter "port" in config section '+section);
+  }
+});
+
+rl.on('close', function() {
+  // Close event fired, stop http server')
+  app.close();
+});
+
+
+
+//
+//
+//var server = app.listen(3000, function () {
+//    console.log('api listening on ', server.address().port);
+//});
+//

@@ -102,9 +102,9 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
     };
 
     if (ionic.Platform.isIOS() || ionic.Platform.isAndroid()) {
-      $authProvider.baseUrl = 'http://localhost:3000/';
+      $authProvider.baseUrl = 'http://db.taciko.com/_todo/';
       $authProvider.cordova = true;
-      commonConfig.redirectUri = 'http://localhost:3000';
+      commonConfig.redirectUri = 'http://db.taciko.com/_todo';
     }
 
     $authProvider.facebook(angular.extend({}, commonConfig, {
