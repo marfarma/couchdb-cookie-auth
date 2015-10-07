@@ -7,7 +7,7 @@
  * Copyright (c) 2013 Pauli Price
  * Licensed under the MIT license.
  */
-
+/*jshint -W069 */
 'use strict';
 // commandline to start mongodb server from terminal
 // mongod --config /usr/local/etc/mongod.conf
@@ -34,10 +34,23 @@ var Promise = require('bluebird'); //jshint ignore:line
 
 var CONFIG = {};
 var section = process.argv[2];
+console.log(section);
 
 var log = function(mesg) {
   console.log(JSON.stringify(["log", mesg]));
 };
+
+//function hexEncode(string){
+//    var hex, i;
+//
+//    var result = "";
+//    for (i=0; i<string.length; i++) {
+//        hex = string.charCodeAt(i).toString(16);
+//        result += ("000"+hex).slice(-4);
+//    }
+//
+//    return result;
+//}
 
 
 var app = express();
@@ -49,10 +62,11 @@ passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
+//TODO: Read these values out of the server config
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Origin', 'http://localhost:9000');
-//    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
@@ -110,17 +124,30 @@ var rl = readline.createInterface({
   output: process.stdout
 });
 
-rl.question(JSON.stringify(['get', section]) + '\n', function(answer) {
-  CONFIG[section] = JSON.parse(answer);
 
-  if (CONFIG[section].port) {
-    app.listen(parseInt(CONFIG[section].port), function() {
-      log('provisioning service listening on port '+CONFIG[section].port);
-    });
+rl.question(JSON.stringify(['get', 'httpd']) + '\n', function(answer) {
+  CONFIG['httpd'] = JSON.parse(answer);
+
+// check the bind address and port
+  var bind_address = CONFIG['httpd'].bind_address;
+  if (!bind_address || bind_address === '0.0.0.0') {
+    CONFIG['httpd'].bind_address = '127.0.0.1';
   }
-  else {
-    log('missing required parameter "port" in config section '+section);
+  var port = CONFIG['httpd'].port;
+  if (!port) {
+    CONFIG['httpd'].port = '8100';
   }
+
+
+  rl.question(JSON.stringify(['get', section]) + '\n', function(answer) {
+    CONFIG[section] = JSON.parse(answer);
+    console.log(answer);
+    console.log(CONFIG);
+
+      app.listen(parseInt(CONFIG[section].port), function() {
+        log('provisioning service listening on port '+CONFIG[section].port);
+      });
+  });
 });
 
 rl.on('close', function() {
@@ -130,9 +157,3 @@ rl.on('close', function() {
 
 
 
-//
-//
-//var server = app.listen(3000, function () {
-//    console.log('api listening on ', server.address().port);
-//});
-//
