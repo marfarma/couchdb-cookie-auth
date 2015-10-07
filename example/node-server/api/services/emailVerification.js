@@ -14,19 +14,19 @@ var jwt = require('jwt-simple');
 var config = require('./config.js');
 var nodemailer = require('nodemailer');
 var mandrillTransport = require('nodemailer-mandrill-transport');
-var User = require('../models/User.js');
+//var User = require('../models/User.js');
 
 var model = {
     verifyUrl: 'http://localhost:3000/auth/verifyEmail?token=',
     title: 'psJwt',
     subTitle: 'Thanks for signing up!',
     body: 'Please verify your email address by clicking the button below!'
-}
+};
 
 exports.send = function (email) {
     var payload = {
 		sub: email
-	}
+	};
 
 	var token = jwt.encode(payload, config.EMAIL_SECRET);
 
@@ -49,8 +49,8 @@ exports.send = function (email) {
         } else {
             console.log('email sent ', info);
         }
-    })
-}
+    });
+};
 
 exports.handler = function(req, res) {
     var token = req.query.token;
@@ -58,29 +58,30 @@ exports.handler = function(req, res) {
     var payload = jwt.decode(token, config.EMAIL_SECRET);
     var email = payload.sub;
 
-    if (!email) return handleError(res);
+    if (!email) {return handleError(res);}
 
-    User.findOne({email: email}, function (err, foundUser) {
-        if (err) return res.status(500);
+//    User.findOne({email: email}, function (err, foundUser) {
+//      if (err) return res.status(500);
+//
+//      if (!foundUser) return handleError(res);
+//
+//      if (!foundUser.active) {
+//        foundUser.active = true;
+//
+//        foundUser.save(function (err) {
+//            if (err) return res.status(500);
+//
+//            return res.redirect(config.APP_URL);
+//        });
+//      }
+//    });
 
-        if (!foundUser) return handleError(res);
-
-        if (!foundUser.active) {
-            foundUser.active = true;
-
-            foundUser.save(function (err) {
-                if (err) return res.status(500);
-
-                return res.redirect(config.APP_URL);
-            });
-        }
-    });
 };
 
-function getHtml(token) {
+function getHtml(token) { //jshint ignore:line
     var path = './views/emailVerification.html';
     // use async read in production apps
-    var html = fs.readFileSync(path,encoding = 'utf8');
+    var html = fs.readFileSync(path.encoding = 'utf8');
 
     var template = _.template(html);
 
@@ -89,12 +90,14 @@ function getHtml(token) {
     return template(model);
 }
 
-function handleError(res) {
+function handleError(res) {//jshint ignore:line
+
+
     return res.status(401).send({
         message: 'Authentication failed, unable to verify email'
     });
-}
 
+}
 _.templateSettings = {
   interpolate: /\{\{(.+?)\}\}/g
 };

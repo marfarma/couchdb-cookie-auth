@@ -39,17 +39,17 @@ module.exports = function (req, res) {
 			User.findOne({
 				facebookId: profile.id
 			}, function (err, existingUser) {
-				if (existingUser)
-					return createSendToken(existingUser, res);
-
-				var newUser = new User();
+              if (existingUser){
+                return createSendToken(existingUser, res);
+              }
+              var newUser = new User();
 				newUser.facebookId = profile.id;
 				newUser.displayName = profile.name;
-				newUser.save(function (err) {
+				newUser.save(function (err) { //jshint ignore:line
 					createSendToken(newUser, res);
-				})
+				});
 
-			})
+			});
 		});
 	});
-}
+};
