@@ -93,7 +93,7 @@ app.post('/auth/login',
 });
 
 
-app.post('/auth/test', function(req, res) {
+app.get('/auth/test', function(req, res) {
        res.send("The proxy is working");
 });
 
