@@ -139,7 +139,7 @@ rl.question(JSON.stringify(['get', 'httpd']) + '\n', function(answer) {
   }
 
 
-  rl.question(JSON.stringify(['get', section]) + '\n', function(answer) {
+  rl.question(JSON.stringify(['get', "'" + section + "'"]) + '\n', function(answer) {
     CONFIG[section] = JSON.parse(answer);
     console.log(answer);
     console.log(CONFIG);
