@@ -135,19 +135,22 @@ rl.question(JSON.stringify(['get', 'httpd']) + '\n', function(answer) {
   }
   var port = CONFIG['httpd'].port;
   if (!port) {
-    CONFIG['httpd'].port = '8100';
+    CONFIG['httpd'].port = '8200';
   }
 
-
-  rl.question(JSON.stringify(['get', "'" + section + "'"]) + '\n', function(answer) {
+  console.log('section is: ' + section);
+  rl.question(JSON.stringify(['get', section]) + '\n', function(answer) {
     CONFIG[section] = JSON.parse(answer);
     console.log(answer);
     console.log(CONFIG);
 
+    if (CONFIG[section].port) {
       app.listen(parseInt(CONFIG[section].port), function() {
         log('provisioning service listening on port '+CONFIG[section].port);
       });
+    }
   });
+
 });
 
 rl.on('close', function() {
