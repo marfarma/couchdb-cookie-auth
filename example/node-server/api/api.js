@@ -34,7 +34,6 @@ var Promise = require('bluebird'); //jshint ignore:line
 
 var CONFIG = {};
 var section = process.argv[2];
-console.log(section);
 
 var log = function(mesg) {
   console.log(JSON.stringify(["log", mesg]));
@@ -138,11 +137,9 @@ rl.question(JSON.stringify(['get', 'httpd']) + '\n', function(answer) {
     CONFIG['httpd'].port = '8200';
   }
 
-  console.log('section is: ' + section);
   rl.question(JSON.stringify(['get', section]) + '\n', function(answer) {
     CONFIG[section] = JSON.parse(answer);
     log(answer);
-    log(CONFIG);
 
     if (CONFIG[section].port) {
       app.listen(parseInt(CONFIG[section].port), function() {
