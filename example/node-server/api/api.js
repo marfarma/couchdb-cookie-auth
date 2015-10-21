@@ -141,8 +141,8 @@ rl.question(JSON.stringify(['get', 'httpd']) + '\n', function(answer) {
   console.log('section is: ' + section);
   rl.question(JSON.stringify(['get', section]) + '\n', function(answer) {
     CONFIG[section] = JSON.parse(answer);
-    console.log(answer);
-    console.log(CONFIG);
+    log(answer);
+    log(CONFIG);
 
     if (CONFIG[section].port) {
       app.listen(parseInt(CONFIG[section].port), function() {
