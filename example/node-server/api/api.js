@@ -78,7 +78,7 @@ passport.use('local-login', localStrategy.login);
 /////////////////////////////////////////////////////////////
 // Authentication & Registration Routes
 /////////////////////////////////////////////////////////////
-app.post('/register',
+app.post('/auth/register',
     passport.authenticate('local-register'), function (req,res) {
         emailVerification.send(req.user.email);
         createSendToken(req.user, res);
@@ -87,13 +87,13 @@ app.post('/register',
 app.get('/auth/verifyEmail', emailVerification.handler);
 
 
-app.post('/login',
+app.post('/auth/login',
     passport.authenticate('local-login'), function(req, res) {
         createSendToken(req.user, res);
 });
 
 
-app.post('/test', function(req, res) {
+app.post('/auth/test', function(req, res) {
        res.send("The proxy is working");
 });
 
