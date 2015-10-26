@@ -30,6 +30,7 @@
     }
   },
   "devDependencies": {
+    "bdd-stdin": "^0.2.0",
     "blanket": "~1.1.5",
     "chai": "^3.2.0",
     "chai-as-promised": "^5.1.0",
