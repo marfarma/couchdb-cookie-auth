@@ -10,6 +10,8 @@
   "strict": true,
   "undef": true,
   "unused": true,
+  "mocha": true,
+  "node": true,
   "globals": {
     "angular": false
   },
@@ -18,6 +20,5 @@
         // 3rd party
         "next"
     ]
-
 
 }

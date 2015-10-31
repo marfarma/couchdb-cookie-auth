@@ -9,17 +9,21 @@
 'use strict';
 var jwt = require('jwt-simple');
 var moment = require('moment');
+var cca = require('couchdb-cookie-auth');
 
 module.exports = function (user, res) {
-	var payload = {
-		sub: user.id,
-		exp: moment().add(10, 'days').unix()
-	};
+  var payload = {
+    sub: user.id,
+    exp: moment().add(10, 'days').unix()
+  };
 
-	var token = jwt.encode(payload, "shhh..");
+  res.setHeader('Set-Cookie', cca.makeCookie(user));
 
-	res.status(200).send({
-		user: user.toJSON(),
-		token: token
-	});
+
+  var token = jwt.encode(payload, "shhh..");
+
+  res.status(200).send({
+    user: user.toJSON(),
+    token: token
+  });
 };

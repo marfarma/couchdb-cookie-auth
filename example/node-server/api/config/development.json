@@ -1,0 +1,10 @@
+{
+  "env": "development",
+  "dbHost": "104.236.41.70",
+  "domain": "104.236.41.70",
+  "dbPort": "80",
+  "dbUser":  "admin",
+  "dbPass":  "admin",
+  "noHttps": false,
+  "dbSsl": false
+}

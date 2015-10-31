@@ -26,7 +26,7 @@ module.exports = function (req, res) {
     client_secret: config.GOOGLE_SECRET
   };
 
-  console.log(req.body.code);
+  //console.log('req.body: ',req.body);
 
   request.post(url, {
     json: true,
@@ -43,18 +43,46 @@ module.exports = function (req, res) {
       headers: headers,
       json: true
     }, function (err, response, profile) {
-      User.findOne({
-        googleId: profile.sub
-      }, function (err, foundUser) {
+      //console.log(Object.keys(profile));
 
-        console.log("here");
+
+
+      User.findOneByAuthProvider(['google', profile.sub],
+        function (err, foundUser) {
+
         if (foundUser) {
           return createSendToken(foundUser, res);
         }
 
+        // check if email exists
+        User.findOneByAuthProvider(['google', profile.sub],
+        function (err, foundUser) {
+          if (foundUser) {
+            // add auth provider to user
+            return createSendToken(foundUser, res);
+          }
+
         var newUser = new User();
+//  ------ expected profile response
+//      {
+//        "kind": "plus#personOpenIdConnect",
+//        "gender": string,
+//        "sub": string,
+//        "name": string,
+//        "given_name": string,
+//        "family_name": string,
+//        "profile": string,
+//        "picture": string,
+//        "email": string,
+//        "email_verified": "true",
+//        "locale": string,
+//        "hd": string
+//      }
+
+
         newUser.googleId = profile.sub;
         newUser.displayName = profile.name;
+
         newUser.save(function (err) {
           if (err) {
             return next(err);
@@ -64,6 +92,9 @@ module.exports = function (req, res) {
 
         });
       });
+
+
     });
   });
+});
 };

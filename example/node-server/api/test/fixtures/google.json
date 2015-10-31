@@ -1,0 +1,66 @@
+[
+  {
+    "scope":"https://www.googleapis.com",
+    "method": "POST",
+    "path": "/oauth2/v3/token",
+    "body": "code=4%2Fr2SHUKHwsXND1KO9IvSj7M2SiV5BOrOtsnEaX-d8-j4&redirect_uri=https%3A%2F%2Fdevelopers.google.com%2Foauthplayground&client_id=407408718192.apps.googleusercontent.com&client_secret=************&scope=&grant_type=authorization_code",
+    "status": "200",
+    "response": {
+      "access_token": "ya29.GwKcl1wguJnuut-9ndPNlwuIKp86jwkGjutndMacgEDZaS2xb-kAlFvUV6Dqglc16bdT",
+      "token_type": "Bearer",
+      "expires_in": "3600",
+      "refresh_token": "1/6GH5NvwrgZoxGHwv9dt6AakvudsVMl1kXrgDUs9ouNM",
+      "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6Ijk4NzZlMWYwMjk0NzQyOWNhOTVkOTQ1NjI1Y2I5YjM1ZTlhNTQzMzQifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXRfaGFzaCI6IkItUVJnc3plYmFkUndkdUFQV0FjcHciLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDgyMzIxMzM5NTAxMjk3NjM3ODIiLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJpYXQiOjE0NDYxNDE1NDEsImV4cCI6MTQ0NjE0NTE0MX0.TM6dPcWGKIArgyDbXc6qTGLhVGhgXyw3viNlPqvHxlTtU-cRNOY-ctkthKqQnCsLNSbpZOLDxE3atxlhRDifMSokHrnn85utkdJHonMHnKmzU4zPgPCthpTqdQodlg5uSeZ6hzbaBLpr0tc-BnRgpSHAtvVcQEIiE6RoBuKkr3S0AJOpMtsMEdif9vqm6O7lMjBQBdEBkKUXHxWnj0RZ2KlIX5dM_gGLao4P903Qb5r1JGLf_mMrQnkP33PPxk70ra8iz9B9-KduRi1zKqLRtzSQaxQtH16-rPbVePHVaNQCf1Qm1ExMb7ibEx1eE6egEt6mMhlrgovSb19SXjQZbA"
+    },
+    "headers": {
+      "X-xss-protection": "1; mode=block",
+      "X-content-type-options": "nosniff",
+      "Expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+      "Vary": "Origin,X-Origin",
+      "Server": "GSE",
+      "Pragma": "no-cache",
+      "Cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+      "Date": "Thu, 29 Oct 2015 17:59:01 GMT",
+      "X-frame-options": "SAMEORIGIN",
+      "Content-type": "application/json; charset=UTF-8"
+    },
+    "reqheader": {"content-type": "application/x-www-form-urlencoded"}
+  },
+  {
+    "scope":"https://www.googleapis.com",
+    "method": "GET",
+    "path": "/plus/v1/people/me/openIdConnect",
+    "body": "",
+    "status": "200",
+    "response": {
+        "profile": "https://plus.google.com/+PauliPrice",
+        "family_name": "Price",
+        "kind": "plus#personOpenIdConnect",
+        "sub": "108232133950129763782",
+        "picture": "https://lh6.googleusercontent.com/-Pqg9uiPOMys/AAAAAAAAAAI/AAAAAAAAAvI/Hq0OBZnMTt0/photo.jpg?sz=50",
+        "locale": "en",
+        "gender": "female",
+        "given_name": "Pauli",
+        "name": "Pauli Price"
+    },
+    "headers": {
+      "X-xss-protection": "1; mode=block",
+      "Content-location": "https://www.googleapis.com/plus/v1/people/me/openIdConnect",
+      "X-content-type-options": "nosniff",
+      "Expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+      "Vary": "Origin,X-Origin",
+      "Server": "GSE",
+      "Expires": "Thu, 29 Oct 2015 19:47:50 GMT",
+      "Etag": "i9aZP8TD8jXVPIxD0T0PWsMRx6s/y1fdZ_uiOnnxxbgsr8mRv6vXvSg",
+      "Date": "Thu, 29 Oct 2015 19:47:50 GMT",
+      "Cache-control": "private, max-age=0, must-revalidate, no-transform",
+      "X-frame-options": "SAMEORIGIN",
+      "Content-type": "application/json; charset=UTF-8"
+    },
+    "reqheader": {"Authorization": "Bearer ya29.GwJ3B3Bdq08lqYUQ6GBlml_tMgLI_J0Pm9ChnMBc-JxbuOtz8QsUTqV7QgtqJhlRkqEl"}
+  }
+
+]
+
+
+

@@ -102,9 +102,9 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
     };
 
     if (ionic.Platform.isIOS() || ionic.Platform.isAndroid()) {
-      $authProvider.baseUrl = 'http://db.taciko.com/_todo/';
+      $authProvider.baseUrl = 'https://db.taciko.com/_todo/';
       $authProvider.cordova = true;
-      commonConfig.redirectUri = 'http://db.taciko.com/_todo';
+      commonConfig.redirectUri = 'https://db.taciko.com/_todo';
     }
 
     $authProvider.facebook(angular.extend({}, commonConfig, {
@@ -118,7 +118,7 @@ angular.module('todo', ['ionic', 'satellizer', 'ngStorage'])
 
     $authProvider.google(angular.extend({}, commonConfig, {
       clientId: '630524341769-18r7lv3t75ius04f7f9na9b4a72bdq08.apps.googleusercontent.com',
-      url: 'auth/google'
+      url: 'google'
     }));
   })
   .controller('AppCtrl', function ($scope, $ionicModal, $timeout) { //jshint ignore:line

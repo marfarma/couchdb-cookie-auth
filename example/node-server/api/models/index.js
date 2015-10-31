@@ -9,24 +9,18 @@
 'use strict';
 
 var smartdb = require('smartdb');
-var Promise = require('bluebird');
-var requireDirectory = require('require-directory');
-module.exports = requireDirectory(module);
+//var Promise = require('bluebird');
 
+// automatically require all models
+//var requireDirectory = require('require-directory');
+//module.exports = requireDirectory(module);
 
 var db = smartdb({
     databases: [
         {
-            url: 'http://localhost:5984/userdb',
+            url: 'http://192.168.99.100:5984/_users',
             entities: {
                 user: { }
-            }
-        },
-        {
-            url: 'http://localhost:5984/blogdb',
-            entities: {
-                blogPost: { },
-                blogComment: { }
             }
         }
     ],
@@ -35,12 +29,12 @@ var db = smartdb({
     mapDocToEntity: function (doc) {
         var type = doc.type;
         if (type === 'user') {return new User(doc);}
-        if (type === 'blogPost') {return new BlogPost(doc);}
-        if (type === 'blogComment') {return new BlogComment(doc);}
-
         throw new Error('Unsupported entity type: ' + type);
-    }
+    },
     /*jshint +W117*/
+    rewriteView: function (type, viewName) {
+        return [type + '-' + viewName, 'fn'];
+    }
 });
 
 module.exports.db = db;
