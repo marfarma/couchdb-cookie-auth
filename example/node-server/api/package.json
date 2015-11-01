@@ -5,9 +5,9 @@
   "main": "api.js",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
-    "couchdb-cookie-auth": "marfarma/couchdb-cookie-auth",
-    "bluebird": "^2.10.0",
+    "bluebird": "^2.10.2",
     "body-parser": "^1.13.2",
+    "couchdb-cookie-auth": "marfarma/couchdb-cookie-auth",
     "crypto": "0.0.3",
     "express": "^4.13.1",
     "express-authorization": "^1.0.0",
@@ -34,7 +34,7 @@
     "sinon": "^1.17.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --reporter mocha-better-spec-reporter"
   },
   "author": "",
   "license": "MIT"

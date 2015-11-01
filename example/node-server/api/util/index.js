@@ -16,7 +16,6 @@
 //        });
 //
 var exists = function( id , cb) {
-
     this.head( id, function( err, body, header ) {
       if ( header[ 'status-code' ] === 200 ) {
           cb(true);
@@ -28,4 +27,36 @@ var exists = function( id , cb) {
     });
 };
 
+  function ensureViewExists(db, viewName, fn) {
+    exists.call(db, viewName, function(check) {
+      console.log(check);
+      if (!check) { //view not found
+        var design_doc = {
+          views: {}
+        };
+        design_doc.views['fn'] = fn;
+        db.insert(design_doc, viewName, function (err, body) {
+          if (err) {
+            console.log(err);
+          }
+        });
+      }
+    });
+  }
+
+  function hexEncode(string){
+      var hex, i;
+
+      var result = "";
+      for (i=0; i<string.length; i++) {
+          hex = string.charCodeAt(i).toString(16);
+          result += ("000"+hex).slice(-4);
+      }
+
+      return result;
+  }
+
+
 module.exports.exists = exists;
+module.exports.hexEncode = hexEncode;
+module.exports.ensureViewExists = ensureViewExists;

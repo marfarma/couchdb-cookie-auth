@@ -35,7 +35,7 @@ describe('api server tests', function() {
       });
   });
 
-  it("should return something on post of google strategy", function (done) {
+  xit("should return something on post of google strategy", function (done) {
 
     console.log(typeof nock.load);
 
