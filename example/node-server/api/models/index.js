@@ -1,7 +1,7 @@
 /*
  * couchdb-cookie-auth
  * https://github.com/pauliprice/couchdb-cookie-auth
- *
+ * test
  * Copyright (c) 2013 Pauli Price
  * Licensed under the MIT license.
  */
