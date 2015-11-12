@@ -64,7 +64,7 @@ describe('api server tests', function () {
     });
   });
 
-  it("should return something on post of google strategy code", function (done) {
+  it.skip("should return something on post of google strategy code", function (done) {
 //    nock.cleanAll();
 //    if (!nock.isActive()) {nock.activate();}
     this.timeout(50000);
