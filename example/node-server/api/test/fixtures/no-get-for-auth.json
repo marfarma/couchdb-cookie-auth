@@ -1,0 +1,9 @@
+[{
+  "scope": "http://localhost:8100",
+  "method": "get",
+  "path": "/auth/google",
+  "body": "",
+  "status": 404,
+  "response": "Cannot GET /auth/google\n"
+}
+]

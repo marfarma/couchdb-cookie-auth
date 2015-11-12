@@ -101,8 +101,8 @@
         output: process.stdout
       });
 
+      port = 8100; //default port
       rl.question(JSON.stringify(['get', section]) + '\n', function(answer) {
-        port = 8100; //defaulit port
         CONFIG[section] = JSON.parse(answer);
         if (CONFIG[section].port) {
           port = parseInt(CONFIG[section].port);

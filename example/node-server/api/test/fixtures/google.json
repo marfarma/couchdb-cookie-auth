@@ -1,9 +1,9 @@
 [
   {
-    "scope":"https://www.googleapis.com",
+    "scope": "https://accounts.google.com:443",
     "method": "POST",
-    "path": "/oauth2/v3/token",
-    "body": "code=4%2Fr2SHUKHwsXND1KO9IvSj7M2SiV5BOrOtsnEaX-d8-j4&redirect_uri=https%3A%2F%2Fdevelopers.google.com%2Foauthplayground&client_id=407408718192.apps.googleusercontent.com&client_secret=************&scope=&grant_type=authorization_code",
+    "path": "/o/oauth2/token",
+    "body": "client_id=630524341769-18r7lv3t75ius04f7f9na9b4a72bdq08.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8100&code=4%2Fr2SHUKHwsXND1KO9IvSj7M2SiV5BOrOtsnEaX-d8-j4&grant_type=authorization_code&client_secret=gP5ZLXauDGiHdXPOhwCn-4bs",
     "status": "200",
     "response": {
       "access_token": "ya29.GwKcl1wguJnuut-9ndPNlwuIKp86jwkGjutndMacgEDZaS2xb-kAlFvUV6Dqglc16bdT",
@@ -24,24 +24,27 @@
       "X-frame-options": "SAMEORIGIN",
       "Content-type": "application/json; charset=UTF-8"
     },
-    "reqheader": {"content-type": "application/x-www-form-urlencoded"}
+    "reqheader": {
+      "content-type": "application/x-www-form-urlencoded"
+    }
   },
+
   {
-    "scope":"https://www.googleapis.com",
+    "scope": "https://www.googleapis.com",
     "method": "GET",
     "path": "/plus/v1/people/me/openIdConnect",
     "body": "",
     "status": "200",
     "response": {
-        "profile": "https://plus.google.com/+PauliPrice",
-        "family_name": "Price",
-        "kind": "plus#personOpenIdConnect",
-        "sub": "108232133950129763782",
-        "picture": "https://lh6.googleusercontent.com/-Pqg9uiPOMys/AAAAAAAAAAI/AAAAAAAAAvI/Hq0OBZnMTt0/photo.jpg?sz=50",
-        "locale": "en",
-        "gender": "female",
-        "given_name": "Pauli",
-        "name": "Pauli Price"
+      "profile": "https://plus.google.com/+PauliPrice",
+      "family_name": "Price",
+      "kind": "plus#personOpenIdConnect",
+      "sub": "5433354891093023",
+      "picture": "https://lh6.googleusercontent.com/-Pqg9uiPOMys/AAAAAAAAAAI/AAAAAAAAAvI/Hq0OBZnMTt0/photo.jpg?sz=50",
+      "locale": "en",
+      "gender": "female",
+      "given_name": "Pauli",
+      "name": "Pauli Price"
     },
     "headers": {
       "X-xss-protection": "1; mode=block",
@@ -57,10 +60,9 @@
       "X-frame-options": "SAMEORIGIN",
       "Content-type": "application/json; charset=UTF-8"
     },
-    "reqheader": {"Authorization": "Bearer ya29.GwJ3B3Bdq08lqYUQ6GBlml_tMgLI_J0Pm9ChnMBc-JxbuOtz8QsUTqV7QgtqJhlRkqEl"}
+    "reqheader": {
+      "Authorization": "Bearer ya29.GwJ3B3Bdq08lqYUQ6GBlml_tMgLI_J0Pm9ChnMBc-JxbuOtz8QsUTqV7QgtqJhlRkqEl"
+    }
   }
 
 ]
-
-
-

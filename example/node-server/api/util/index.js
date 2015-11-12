@@ -15,22 +15,26 @@
 //            console.log(check);
 //        });
 //
-var exists = function( id , cb) {
+var exists = function( id, cb) {
     this.head( id, function( err, body, header ) {
-      if ( header[ 'status-code' ] === 200 ) {
-          cb(true);
-        }
-        else if ( err[ 'status-code' ] === 404 ) {
-          cb(false);
-        }
-        cb(false);
-    });
+      if ( err && err[ 'status-code' ] === 404 ) {
+        cb(null, false);
+      } else if ( err ) {
+        cb(err);
+      } else if ( header && header[ 'status-code' ] && header[ 'status-code' ] === 200 ) {
+        cb(null, true);
+      }
+      cb(false);
+  });
 };
 
   function ensureViewExists(db, viewName, fn) {
-    exists.call(db, viewName, function(check) {
-      console.log(check);
-      if (!check) { //view not found
+    exists.call(db, viewName, function(err, check) {
+      //console.log(check);
+      if (err) {
+        // Handle Error
+      }
+      if (check === false) { //view not found
         var design_doc = {
           views: {}
         };

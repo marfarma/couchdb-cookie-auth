@@ -18,12 +18,12 @@ var smartdb = require('smartdb');
 var db = smartdb({
   databases: [
     {
-      url: 'https://192.168.99.100:5984/',
+      url: 'https://192.168.99.100:6984/_users',
       entities: {
         user: {}
       }
-        }
-    ],
+    }
+  ],
   /*jshint -W117*/
   mapDocToEntity: function (doc) {
     var type = doc.type;

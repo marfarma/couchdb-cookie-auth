@@ -16,12 +16,8 @@ module.exports = function (user, res) {
     sub: user.id,
     exp: moment().add(10, 'days').unix()
   };
-
-  res.setHeader('Set-Cookie', cca.makeCookie(user));
-
-
+  res.setHeader('Set-Cookie', cca.makeCookie(user.name));
   var token = jwt.encode(payload, "shhh..");
-
   res.status(200).send({
     user: user.toJSON(),
     token: token

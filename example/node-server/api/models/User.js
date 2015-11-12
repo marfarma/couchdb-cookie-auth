@@ -10,11 +10,19 @@
 
 'use strict';
 
-var db = require('./index.js');
-var util = require('util');
+var db = require('./index.js').db;
+var util = require('../util');
 var Promise = require('bluebird'); //jshint ignore:line
-var nano = require('nano');
+var dbName;
+var appName = 'cookie-auth-example';
+var nanoDb = require('nano')({
+  request_defaults: {
+    strictSSL: false
+  },
+  url: 'https://admin:admin@192.168.99.100/'
+});
 
+// Extremely unsecure - removes self-signed certificate error
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 
@@ -44,7 +52,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   function User(props, cb) {
     this.type = "user";
 
-    if (props.name) {
+    if (props && props.name) {
       this.name = props.name;
       this._id = 'org.couchdb.user:' + this.name;
     } else {
@@ -53,57 +61,57 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
       }
     }
 
-    if (props.given_name) {
+    if (props && props.given_name) {
       this.given_name = props.given_name;
     }
 
-    if (props.family_name) {
+    if (props && props.family_name) {
       this.family_name = props.family_name;
     }
 
-    if (props.roles) {
+    if (props && props.roles) {
       this.roles = props.roles;
     } else {
       this.roles = [];
     }
 
     this.authkeys = [];
-    if (props.googleId) {
+    if (props && props.googleId) {
       this.authkeys.push({
         provider: "google",
         id: props.googleId
       });
     }
 
-    if (props.facebookId) {
+    if (props && props.facebookId) {
       this.authkeys.push({
         provider: "facebook",
         id: props.facebookId
       });
     }
 
-    if (props.twitterId) {
+    if (props && props.twitterId) {
       this.authkeys.push({
         provider: "twitter",
         id: props.twitterId
       });
     }
 
-    if (props.githubId) {
+    if (props && props.githubId) {
       this.authkeys.push({
         provider: "github",
         id: props.githubId
       });
     }
 
-    if (props.email) {
+    if (props && props.email) {
       this.authkeys.push({
         provider: "email",
         id: props.email
       });
     }
 
-    if ((this.authkeys.length === 0) && (!props.password)) {
+    if ((this.authkeys.length === 0) && props && (!props.password)) {
       if (cb) {
         cb(new TypeError('Error: no authentiation provider found.'));
       }
@@ -111,7 +119,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
     this.appNamespace = [];
 
-    if (props.password) {
+    if (props && props.password) {
       this.password = props.password;
     } else {
       // generate if not present, validate that an authProvider exists
@@ -168,7 +176,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   });
 
   User.modelViews.map(function (view, idx) {
-    util.ensureViewExists(db, view.name, view.fn);
+    var ndb = nanoDb.use('_users');
+    util.ensureViewExists(ndb, view.name, view.fn);
   });
 
   //===========================================================================
@@ -224,19 +233,32 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   };
 
   User.prototype.findOneByAuthProvider = function (provider, id, cb) {
-    db.view('user-by_authprovider_id', 'fn', {
-        key: [provider, id]
+//    console.log(id);
+//    var query = encodeURIComponent('[' + provider + ', ' + id + ']');
+    var query = [provider, id];
+//    console.log('key: ', query);
+    //    console.log(db.view.toString());
+    db.view('user',
+      'user-by_authprovider_id', {
+        key: query
       },
       function (err, user) {
         if (err) {
+          console.log(err);
           if (cb) {
             cb(err);
           }
-        }
-        if (cb) {
-          cb(null, user);
+        } else {
+          if (cb) {
+            console.log(user);
+            cb(null, user);
+          }
         }
       });
+
+
+
+
   };
 
   //===========================================================================
@@ -245,16 +267,6 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   //
   //
   //===========================================================================
-  var dbName;
-  var appName = 'cookie-auth-example';
-  var nanoDb = require('nano')({
-    request_defaults: {
-      strictSSL: false
-    },
-    url: 'https://admin:admin@192.168.99.100/'
-  });
-
-
 
   User.prototype.createUserAppDb = function (appNamespace, cb) {
     var dbName;

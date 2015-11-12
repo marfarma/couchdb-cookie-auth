@@ -1,0 +1,176 @@
+  [{
+      "scope": "https://www.googleapis.com",
+      "method": "POST",
+      "path": "/oauth2/v3/token",
+      "body": "code=4%2Fr2SHUKHwsXND1KO9IvSj7M2SiV5BOrOtsnEaX-d8-j4&redirect_uri=https%3A%2F%2Fdevelopers.google.com%2Foauthplayground&client_id=407408718192.apps.googleusercontent.com&client_secret=************&scope=&grant_type=authorization_code",
+      "status": "200",
+      "response": {
+        "access_token": "ya29.GwKcl1wguJnuut-9ndPNlwuIKp86jwkGjutndMacgEDZaS2xb-kAlFvUV6Dqglc16bdT",
+        "token_type": "Bearer",
+        "expires_in": "3600",
+        "refresh_token": "1/6GH5NvwrgZoxGHwv9dt6AakvudsVMl1kXrgDUs9ouNM",
+        "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6Ijk4NzZlMWYwMjk0NzQyOWNhOTVkOTQ1NjI1Y2I5YjM1ZTlhNTQzMzQifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXRfaGFzaCI6IkItUVJnc3plYmFkUndkdUFQV0FjcHciLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDgyMzIxMzM5NTAxMjk3NjM3ODIiLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJpYXQiOjE0NDYxNDE1NDEsImV4cCI6MTQ0NjE0NTE0MX0.TM6dPcWGKIArgyDbXc6qTGLhVGhgXyw3viNlPqvHxlTtU-cRNOY-ctkthKqQnCsLNSbpZOLDxE3atxlhRDifMSokHrnn85utkdJHonMHnKmzU4zPgPCthpTqdQodlg5uSeZ6hzbaBLpr0tc-BnRgpSHAtvVcQEIiE6RoBuKkr3S0AJOpMtsMEdif9vqm6O7lMjBQBdEBkKUXHxWnj0RZ2KlIX5dM_gGLao4P903Qb5r1JGLf_mMrQnkP33PPxk70ra8iz9B9-KduRi1zKqLRtzSQaxQtH16-rPbVePHVaNQCf1Qm1ExMb7ibEx1eE6egEt6mMhlrgovSb19SXjQZbA"
+      },
+      {
+    "scope": "http://localhost:8100",
+    "method": "POST",
+    "path": "/auth/google",
+    "status": "404",
+    "statusCode": "404",
+    "response": {
+      "access_token": "ya29.GwKcl1wguJnuut-9ndPNlwuIKp86jwkGjutndMacgEDZaS2xb-kAlFvUV6Dqglc16bdT",
+      "token_type": "Bearer",
+      "expires_in": "3600",
+      "refresh_token": "1/6GH5NvwrgZoxGHwv9dt6AakvudsVMl1kXrgDUs9ouNM"
+    }
+  },
+
+  {
+    "scope": "http://localhost:8100",
+    "method": "POST",
+    "path": "/auth/google",
+    "status": "404",
+    "statusCode": "404",
+    "response": {
+      "access_token": "ya29.GwKcl1wguJnuut-9ndPNlwuIKp86jwkGjutndMacgEDZaS2xb-kAlFvUV6Dqglc16bdT",
+      "token_type": "Bearer",
+      "expires_in": "3600",
+      "refresh_token": "1/6GH5NvwrgZoxGHwv9dt6AakvudsVMl1kXrgDUs9ouNM"
+    },
+    "reqheader": {
+      "code": "4/r2SHUKHwsXND1KO9IvSj7M2SiV5BOrOtsnEaX-d8-j4",
+      "redirectUri": "http://localhost:8100",
+      "clientId": "630524341769-18r7lv3t75ius04f7f9na9b4a72bdq08.apps.googleusercontent.com"
+    }
+  },
+
+
+
+  {
+    "scope": "http://localhost:8100",
+    "method": "POST",
+    "path": "/auth/google",
+    "status": "404",
+    "statusCode": "404",
+    "response": {
+      "access_token": "ya29.GwKcl1wguJnuut-9ndPNlwuIKp86jwkGjutndMacgEDZaS2xb-kAlFvUV6Dqglc16bdT",
+      "token_type": "Bearer",
+      "expires_in": "3600",
+      "refresh_token": "1/6GH5NvwrgZoxGHwv9dt6AakvudsVMl1kXrgDUs9ouNM"
+    }
+  },
+
+
+
+
+
+
+
+
+
+
+      "headers": {
+        "X-xss-protection": "1; mode=block",
+        "X-content-type-options": "nosniff",
+        "Expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+        "Vary": "Origin,X-Origin",
+        "Server": "GSE",
+        "Pragma": "no-cache",
+        "Cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+        "Date": "Thu, 29 Oct 2015 17:59:01 GMT",
+        "X-frame-options": "SAMEORIGIN",
+        "Content-type": "application/json; charset=UTF-8"
+      },
+      "reqheader": {
+        "content-type": "application/x-www-form-urlencoded"
+      }
+  },
+    {
+      "scope": "https://192.168.99.100:443",
+      "method": "HEAD",
+      "path": "/_users/_design/user-all",
+      "body": "",
+      "status": 200,
+      "response": "",
+      "headers": {
+        "etag": "\"1-05131fcd711f7006f9cee2fb080252bf\"",
+        "date": "Wed, 11 Nov 2015 01:17:04 GMT",
+        "content-type": "application/json",
+        "cache-control": "must-revalidate",
+        "statusCode": 200,
+        "uri": "https://admin:admin@192.168.99.100/_users/_design/user-all"
+      },
+      "reqheaders": {
+        "content-type": "application/json",
+        "accept": "application/json",
+        "host": "192.168.99.100",
+        "authorization": "Basic YWRtaW46YWRtaW4=",
+        "content-length": 0
+      }
+    }, {
+      "scope": "https://192.168.99.100:443",
+      "method": "HEAD",
+      "path": "/_users/_design/user-by_authprovider_id",
+      "body": "",
+      "status": 200,
+      "response": "",
+      "headers": {
+        "etag": "\"1-7954ab8919ea836fd485b82f84fb5710\"",
+        "date": "Wed, 11 Nov 2015 01:17:04 GMT",
+        "content-type": "application/json",
+        "cache-control": "must-revalidate",
+        "statusCode": 200,
+        "uri": "https://admin:admin@192.168.99.100/_users/_design/user-by_authprovider_id"
+      },
+      "reqheaders": {
+        "content-type": "application/json",
+        "accept": "application/json",
+        "host": "192.168.99.100",
+        "authorization": "Basic YWRtaW46YWRtaW4=",
+        "content-length": 0
+      }
+    }, {
+      "scope": "https://192.168.99.100:443",
+      "method": "HEAD",
+      "path": "/_users/_design/user-by_username",
+      "body": "",
+      "status": 200,
+      "response": "",
+      "headers": {
+        "etag": "\"1-6fc8e5b4eca3f293035fb2f0d71b66e2\"",
+        "date": "Wed, 11 Nov 2015 01:17:04 GMT",
+        "content-type": "application/json",
+        "cache-control": "must-revalidate",
+        "statusCode": 200,
+        "uri": "https://admin:admin@192.168.99.100/_users/_design/user-by_username"
+      },
+      "reqheaders": {
+        "content-type": "application/json",
+        "accept": "application/json",
+        "host": "192.168.99.100",
+        "authorization": "Basic YWRtaW46YWRtaW4=",
+        "content-length": 0
+      }
+    }, {
+      "scope": "https://192.168.99.100:443",
+      "method": "HEAD",
+      "path": "/_users/_design/user-by_lastname",
+      "body": "",
+      "status": 200,
+      "response": "",
+      "headers": {
+        "etag": "\"1-a0088ec59fa5c37668f1e3dca32f8ef1\"",
+        "date": "Wed, 11 Nov 2015 01:17:04 GMT",
+        "content-type": "application/json",
+        "cache-control": "must-revalidate",
+        "statusCode": 200,
+        "uri": "https://admin:admin@192.168.99.100/_users/_design/user-by_lastname"
+      },
+      "reqheaders": {
+        "content-type": "application/json",
+        "accept": "application/json",
+        "host": "192.168.99.100",
+        "authorization": "Basic YWRtaW46YWRtaW4=",
+        "content-length": 0
+      }
+    }]
