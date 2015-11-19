@@ -20,7 +20,7 @@
     "node": ">= 0.10.40"
   },
   "scripts": {
-    "test": "node --harmony $(which grunt) mochaTest",
+    "test": "NOCK_OFF=true DEBUG='cookieauth,nano' NANO_ENV='testing' node --harmony $(which grunt) mochaTest",
     "testlive": "NOCK_OFF=true node --harmony $(which grunt) mochaTest",
     "start": "grunt"
   },
@@ -57,9 +57,11 @@
   },
   "keywords": [],
   "dependencies": {
+    "agentkeepalive": "^2.0.3",
     "bluebird": "^2.10.0",
     "convict": "~1.0.1",
     "cookie": "^0.2.0",
+    "debug": "^2.2.0",
     "nano": "~6.1.5",
     "nano-blue": "~0.3.0",
     "sixtyfour": "^1.0.0"

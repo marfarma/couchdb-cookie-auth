@@ -16,6 +16,7 @@
   //ssh core@yourdigitaloceanserver
   //docker pull marfarma/couchdb
   //docker run -d -p 80:5984 –name couchdb marfarma/couchdb
+var models = require('./models').models; //jshint ignore:line
 
 
 (function (){
@@ -29,6 +30,7 @@
   var googleAuth = require('./services/googleAuth.js');
   var readline = require('readline');
   var Promise = require('bluebird'); //jshint ignore:line
+  Object.assign = require('object-assign');
   var provision = {};
 //  var record = require('./test/record');
 //  var nock = require('nock');

@@ -10,16 +10,29 @@
 var jwt = require('jwt-simple');
 var moment = require('moment');
 var cca = require('couchdb-cookie-auth');
+var debug = require('debug')('makecookie');
 
 module.exports = function (user, res) {
+  debug('called createAndSendToken with user: ', user);
+  debug('res: ', res);
+  console.trace('check the stack');
   var payload = {
     sub: user.id,
     exp: moment().add(10, 'days').unix()
   };
-  res.setHeader('Set-Cookie', cca.makeCookie(user.name));
-  var token = jwt.encode(payload, "shhh..");
-  res.status(200).send({
-    user: user.toJSON(),
-    token: token
+  cca.makeCookie(user.name)
+  .then(function(cookie) {
+    debug('promise resolved makeCookie: ', cookie);
+    console.log(cookie);
+    res.setHeader('Set-Cookie', cookie);
+
+    var token = jwt.encode(payload, "shhh..");
+    res.status(200).send({
+      user: JSON.stringify(user),
+      token: token
+    });
+  }).catch(function(err){
+    debug('promise rejected makeCookie: ', err);
+//    throw new Error(err);
   });
 };

@@ -60,6 +60,10 @@ var exists = function( id, cb) {
       return result;
   }
 
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+module.exports.isFunction = isFunction;
 
 module.exports.exists = exists;
 module.exports.hexEncode = hexEncode;

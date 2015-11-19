@@ -13,6 +13,7 @@ var cca = require('../lib/couchdb-cookie-auth'),
   sha1 = require('../external/sha1'),
   base64url = require('sixtyfour'),
   tk = require('timekeeper'),
+  debug = require('debug')('cookieauth'),
   user = 'patricia';
 
   chai.use(chaiAsPromised);
@@ -110,6 +111,13 @@ describe('Cookie', function() {
       test_helper.fixClock(tk, target.ExpiredTimeStr);
       return cca.validCookie(target.Cookie).should.become(false);
     });
+
+
+
+
+
+
+
     it('should return valid when current time is within the timeout period', function() {
       scope.done();
       nock.cleanAll();
@@ -129,6 +137,14 @@ describe('Cookie', function() {
       test_helper.fixClock(tk, target.FutureOkTimeStr);
       return cca.validCookie(target.Cookie).should.become(true);
     });
+
+
+
+
+
+
+
+
     it('should validate generated cookie value', function() {
       scope.done();
       nock.cleanAll();

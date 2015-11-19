@@ -1,10 +1,10 @@
 {
   "env": "test",
-  "dbHost": "104.236.41.70",
-  "domain": "104.236.41.70",
-  "dbPort": "80",
+  "dbHost": "192.168.99.100",
+  "domain": "192.168.99.100",
+  "dbPort": "443",
   "dbUser":  "admin",
   "dbPass":  "admin",
   "noHttps": false,
-  "dbSsl": false
+  "dbSsl": true
 }

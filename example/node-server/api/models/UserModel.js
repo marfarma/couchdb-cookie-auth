@@ -10,9 +10,18 @@
 
 'use strict';
 
-var db = require('./index.js').db;
+var debug = require('debug')('user');
+//debug('index require: ', require('../models'));
+//debug('db: ', db);
+var smartdb = require('smartdb');
+var db_config = require('./setup.js').db_config;
 var util = require('../util');
 var Promise = require('bluebird'); //jshint ignore:line
+var config = require('../services/config.js');
+var _ = require('underscore');
+var config = _.extend(config, require('../config/development.json'));
+debug('config: ', config);
+
 var dbName;
 var appName = 'cookie-auth-example';
 var nanoDb = require('nano')({
@@ -124,7 +133,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     } else {
       // generate if not present, validate that an authProvider exists
       if (this.authkeys.length > 0) {
-        this.password = 'notSet'; // base64encoded username
+        this.password = 'notSet'; // TODO: base64encoded username
       } else {
         if (cb) {
           cb(new TypeError('Error: no authentiation provider found.'));
@@ -137,6 +146,16 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
       cb(null, this);
     }
   }
+//  var db = User.db ? User.db : ;
+  if (! User.db) {
+    db_config.mapDocToEntity = function (doc) {
+      var type = doc.type;
+      if (type === 'user') { return new User(doc); }
+      throw new Error('Unsupported entity type: ' + type);
+    };
+    /*jshint +W117*/
+    var db = smartdb(db_config);
+  }
 
   //===========================================================================
   //
@@ -145,37 +164,37 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   //
   //===========================================================================
 
-  User.modelViews = [];
+  var modelViews = [];
 
-  User.modelViews.push({
+  modelViews.push({
     name: '_design/user-all',
     fn: {
       "map": "function(doc) { if (doc.type == 'user') { emit(null, doc); } }"
     }
   });
 
-  User.modelViews.push({
+  modelViews.push({
     name: '_design/user-by_authprovider_id',
     fn: {
       "map": "function(doc) { if (doc.type == 'user' && doc.authkeys.length > 0) {for (var idx in doc.authkeys) { emit([doc.authkeys[idx].provider, doc.authkeys[idx].id], doc);}}}"
     }
   });
 
-  User.modelViews.push({
+  modelViews.push({
     name: '_design/user-by_username',
     fn: {
       "map": "function(doc) { if (doc.type == 'user') { emit(doc.name, doc); } }"
     }
   });
 
-  User.modelViews.push({
+  modelViews.push({
     name: '_design/user-by_lastname',
     fn: {
       "map": "function(doc) { if (doc.type == 'user') { emit(doc.family_name, doc); } }"
     }
   });
 
-  User.modelViews.map(function (view, idx) {
+  modelViews.map(function (view, idx) {
     var ndb = nanoDb.use('_users');
     util.ensureViewExists(ndb, view.name, view.fn);
   });
@@ -204,7 +223,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
   User.prototype.findByLastName = function (name, cb) {
     db.view('user-by_lastname', 'fn', {
-      key: name
+      keys: name
     }, function (err, user) {
       if (err) {
         if (cb) {
@@ -219,7 +238,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
   User.prototype.findOneByUsername = function (name, cb) {
     db.view('user-by_username', 'fn', {
-      key: name
+      keys: name
     }, function (err, user) {
       if (err) {
         if (cb) {
@@ -233,33 +252,87 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   };
 
   User.prototype.findOneByAuthProvider = function (provider, id, cb) {
-//    console.log(id);
-//    var query = encodeURIComponent('[' + provider + ', ' + id + ']');
-    var query = [provider, id];
-//    console.log('key: ', query);
-    //    console.log(db.view.toString());
+//    var username = config.dbUser
+//    , userpass = config.dbPass
+//    , callback = console.log // this would normally be some callback
+//    , cookies  = {} // store cookies, normally redis or something
+//    ;
+//    nanoDb.auth(username, userpass, function (err, body, headers) {
+//      if (err) {
+//        return callback(err);
+//      }
+//
+//      if (headers && headers['set-cookie']) {
+//        cookies[user] = headers['set-cookie'];
+//      }
+//
+//      callback(null, "it worked");
+//    });
+
+//    nano {
+//      method: 'POST',
+//      headers: {
+//        'content-type': 'application/json',
+//        accept: 'application/json'
+//      },
+//      uri: 'https://admin:admin@192.168.99.100/_users/_design/user-by_authprovider_id/_view/fn',
+//      qs: {
+//        include_docs: true
+//      },
+//      body: '{"keys":["[google,5135461323057180]"]}'
+//    }
+    var query = [];
+    var keys = [];
+    keys.push(provider);
+    keys.push(id);
+    query.push(keys);
+    debug('findOneByAuthProvider: query: ', query);
+
+    var nanoOpts = { db: '_users',
+      path: '_design/user-by_authprovider_id/_view/fn',
+      method: 'POST',
+      qs: { include_docs: true },
+      body: {keys: query },
+      url: 'https://admin:admin@192.168.99.100/'
+    };
+    debug('nanoOpts', nanoOpts);
+
+    nanoDb.relax(nanoOpts);
+
     db.view('user',
       'user-by_authprovider_id', {
-        key: query
+        keys: query
       },
       function (err, user) {
         if (err) {
-          console.log(err);
+          debug('view query error: ', err);
           if (cb) {
             cb(err);
           }
         } else {
           if (cb) {
-            console.log(user);
+            debug('user from view: ', user);
             cb(null, user);
           }
         }
       });
-
-
-
-
   };
+
+  User.prototype.toJSON = function () {
+    JSON.stringify(this);
+  };
+
+  User.prototype.save = function () {
+
+    db.save(this, function (err) {
+      if (err) {
+//        return handleErr(err);
+        debug('Error saving user: ', err);
+      }
+      // johnDoe._id and johnDoe._rev is automatically set by save()
+    });
+  };
+
 
   //===========================================================================
   //

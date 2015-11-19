@@ -4,13 +4,14 @@
   "description": "",
   "main": "api.js",
   "dependencies": {
+    "agentkeepalive": "^2.0.3",
     "bcrypt-nodejs": "0.0.3",
-    "bluebird": "^2.10.2",
+    "bluebird": "^3.0.5",
     "body-parser": "^1.13.2",
     "couchdb-cookie-auth": "marfarma/couchdb-cookie-auth",
     "crypto": "0.0.3",
+    "debug": "^2.2.0",
     "express": "^4.13.1",
-    "express-authorization": "^1.0.0",
     "is-json": "^1.2.5",
     "jwt-simple": "^0.3.0",
     "moment": "^2.10.6",
@@ -19,24 +20,30 @@
     "nodemailer": "^1.4.0",
     "nodemailer-mandrill-transport": "^0.3.0",
     "nodemailer-smtp-transport": "^1.0.3",
-    "passport": "^0.2.2",
+    "object-assign": "^4.0.1",
+    "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "querystring": "^0.2.0",
     "request": "^2.60.0",
+    "require-all": "^2.0.0",
     "require-directory": "^2.1.1",
-    "smartdb": "^2.0.0",
+    "smartdb": "^3.0.1",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "http-post": "^0.1.1",
+    "longjohn": "^0.2.10",
     "mocha-better-spec-reporter": "^3.0.0",
     "needle": "^0.11.0",
-    "nock": "^2.17.0",
+    "nock": "^3.0.0",
     "random-fixture-data": "^2.0.15",
     "sinon": "^1.17.2"
   },
   "scripts": {
-    "test": "mocha --reporter mocha-better-spec-reporter"
+    "test1": "DEBUG='*' NANO_ENV='testing' mocha --full-trace --reporter mocha-better-spec-reporter",
+    "test2": "DEBUG='*' NANO_ENV='testing' node-debug --web-port=8081 --nodejs /usr/local/bin/_mocha test/api-test.js --full-trace --reporter mocha-better-spec-reporter",
+    "test3": "DEBUG='needle,auth,user,smartdb,nano' NANO_ENV='testing' mocha --debug-brk --nodejs /usr/local/bin/_mocha test/api-test.js --full-trace --reporter mocha-better-spec-reporter",
+    "test4": "DEBUG='needle,auth,user,smartdb,nano' NANO_ENV='testing' mocha --nodejs /usr/local/bin/_mocha test/api-test.js --full-trace --reporter mocha-better-spec-reporter",
+    "test": "DEBUG='auth,user,setup,models,makecookie' NANO_ENV='testing' mocha --nodejs /usr/local/bin/_mocha test/api-test.js --full-trace --reporter mocha-better-spec-reporter"
   },
   "author": "",
   "license": "MIT"

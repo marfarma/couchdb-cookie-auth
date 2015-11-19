@@ -11,7 +11,16 @@ var assert = chai.assert;
 var needle = require('needle');
 var server = require("../api");
 var nock = require('nock');
-//nocks = nocks.concat(nock.load('test/fixtures/localhost.json'));
+var isJSON = require('is-json');
+var debug = require('debug');
+//require('longjohn');
+var _ = require('underscore');
+
+var util = require('util');
+util.isFunction = _.isFunction;
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 
 describe('api server tests', function () {
   var app; //jshint ignore:line
@@ -57,23 +66,26 @@ describe('api server tests', function () {
 //      enable_reqheaders_recording: true
 //    });
     needle.get("http://localhost:8100/auth/google", function (err, res) {
-      if (err) {console.log(err); assert.fail('get request failed');}
+      if (err) {console.log('test get auth/google failed: ', err); assert.fail('get request failed');}
 //      assert(nocks.isDone());
       assert.equal(res.statusCode, 404);
       done();
     });
   });
 
-  it.skip("should return something on post of google strategy code", function (done) {
+  it.only("should return something on post of google strategy code", function (done) {
 //    nock.cleanAll();
 //    if (!nock.isActive()) {nock.activate();}
+//    debugger;
     this.timeout(50000);
+
     var options = {
       headers: {
         "Content-Type": "application/json;charset=UTF-8",
         "Accept": "application/json, text/plain, */*"
       },
       parse_response: false,
+      open_timeout: 0,
       json: true
     };
 
@@ -93,14 +105,32 @@ describe('api server tests', function () {
 //      var nockCalls = nock.recorder.play();
 //      console.log(JSON.stringify(nockCalls));
       if (err) {
-        console.log('post result is err: ', err);
+        debug('post result is err: ', err);
         assert.ok(false, 'should not receive error');
         done();
       } else {
+        if (isJSON(res.body)) {
+          var token = JSON.parse(res.body);
+          console.log('result was parsed', token);
+      }
         console.log('post result not err: ', res.body.toString());
         res.should.be.defined;
 //        assert.not.equal(res, undefined);
 //        assert(nocks.isDone());
+        done();
+      }
+    });
+
+  });
+
+  it('test connection ad noc', function(done) {
+    this.timeout(50000);
+    needle.get('https://admin:admin@192.168.99.100/_users', function(error, response) {
+      if (!error && response.statusCode === 200) {
+        console.log(response.body);
+        done();
+      } else {
+        console.log( error );
         done();
       }
     });
