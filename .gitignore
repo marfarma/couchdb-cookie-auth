@@ -4,6 +4,10 @@
 *.txt
 /coverage.html
 /config/temp.md
+/config/ssl*
+/config/sub*
+/config/*.pem
+/config/*.cer
 /undefined
 /test/scratch.js
 /example/node-server/node_modules/
@@ -11,3 +15,5 @@
 /example/node-server/frontend/
 /example/node-server/config.apps.googleusercontent.com.json
 /example/node-server/api/redirect.js
+config/intermediate-startssl.pem
+lib/util.js

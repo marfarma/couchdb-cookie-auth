@@ -1,7 +1,9 @@
 /*jslint node: true, unparam: true, vars: true, es5: true, white: true, nomen: true*/
 'use strict';
+require('mocha-clean');
 
 module.exports = function(grunt) {
+  global._$jscoverage = {};
 
   var globalConfig = {};
   // Project configuration.
@@ -9,7 +11,7 @@ module.exports = function(grunt) {
     mochaTest: {
       test: {
         options: {
-          reporter: 'spec',
+          reporter: 'mocha-better-spec-reporter',
           clearRequireCache: true,
           timeout: 5000,
           require: 'coverage/blanket',
@@ -61,7 +63,7 @@ module.exports = function(grunt) {
         clearRequireCache: true,
         ignoreLeaks: false,
         ui: 'bdd',
-        reporter: 'spec'
+        reporter: 'mocha-better-spec-reporter'
       },
       all: {
         src: ['test/**/*.js']
@@ -82,19 +84,18 @@ module.exports = function(grunt) {
         options: {
           stdout: true
         },
-        command: 'NOCK_OFF=true node --harmony $(which grunt) mochaTest'
-      },
+        command: "NOCK_OFF=true DEBUG='cookieauth' node --harmony $(which grunt) mochaTest --timeout=50000"      },//
       debugtest: {
         options: {
           stdout: true
         },
-        command: 'node --debug --harmony $(which grunt) test'
+        command: 'node --debug-brk --harmony $(which grunt) mochaTest'
       },
       debugtestlive: {
         options: {
           stdout: true
         },
-        command: 'NOCK_OFF=true node --debug --harmony $(which grunt) test'
+        command: 'NOCK_OFF=true node --debug-brk --harmony $(which grunt) mochaTest'
       }
     },
     'node-inspector': {

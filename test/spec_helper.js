@@ -16,6 +16,7 @@
 
       config.loadFile('./config/' + env + '.json');
       couchdb_cookie_auth.setUserPass(config.get('dbUser'), config.get('dbPass'));
+      // console.log(config);
   };
 
 
@@ -40,7 +41,7 @@
         return server.request({
             method : 'PUT',
             path: '_config/' + section + '/' + key,
-            body: value
+            body: String(value)
         })
         .then(function(body) {
             return Promise.resolve([body]);
